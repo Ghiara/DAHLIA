@@ -9,7 +9,7 @@ Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulatio
 Go to the GitHub repository website and select 'Code' to get an HTTPS or SSH link to the repository.
 Clone the repository to your device, e.g.
 ```bash
-git clone https://github.com/Flakeeeet/capravens.git
+git clone https://github.com/Ghiara/DAHLIA
 ```
 Enter the root directory of this project on your device. The root directory contains this README-file.
 
@@ -22,17 +22,17 @@ to *requirements.txt* in this case. In the following, we will proceed with conda
 
 Install the environment using the ``conda`` command:
 ```bash
-conda create -n capravens python=3.9
+conda create -n dahlia python=3.9
 ```
 This might take some time because it needs to download and install all required packages.
 
 Activate the new environment by running (Make sure that no other environment was active before.):
 ```bash
-conda activate capravens
+conda activate dahlia
 ```
 
 ### Install Other Packages
-**NOTE:** CapRavens principly does not need training. Install Pytorch in case you want to 
+**NOTE:** DAHLIA principly does not need training. Install Pytorch in case you want to 
 fine-tune the LLM or use CLIPort. 
 ```bash
 pip install -r requirements.txt
@@ -88,7 +88,7 @@ python cliport/cap.py task=[task name] mode=cap check=False
 ```
 
 ### Generate Test Task Dataset
-CapRavens uses the same dataset style of CLIPort.
+DAHLIA uses the same dataset style of CLIPort.
 
 Fill in **number of samples** to set number of episodes one task dataset should have.
 

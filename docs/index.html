@@ -52,17 +52,23 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Long-Horizon Language-Conditioned Robot Arm Manipulation with code Generation</h1>
+            <h1 class="title is-1 publication-title">Data-Agnostic Robotic Long-Horizon Manipulation with Language-Conditioned Closed-Loop Feedback</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
+                <a target="_blank">Yuan Meng</a><sup>1</sup>,</span>
+              <span class="author-block">
                 <a target="_blank">Haihui Ye</a><sup>1</sup>,</span>
-                <span class="author-block">
-                  <a target="_blank">Shengqiang Zhang</a><sup>2</sup>,</span>
-                  <span class="author-block">
-                    <a target="_blank">Zhenshan Bing</a><sup>1</sup>,</span>
-                    <span class="author-block">
-                      <a target="_blank">Anois Knoll</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a target="_blank">Shengqiang Zhang</a><sup>2</sup>,</span>
+              <span class="author-block">
+                <a target="_blank">Xiangtong Yao</a><sup>1</sup>,</span>
+              <br><span class="author-block">
+                <a target="_blank">Achim Lilienthal</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a target="_blank">Zhenshan Bing</a><sup>1,3,&dagger;</sup>,</span>
+              <span class="author-block">
+                <a target="_blank">Anois Knoll</a><sup>1</sup>,</span>
                     
                   </div>
 
@@ -70,7 +76,8 @@
                     <span class="author-block">
                       <small><sup>1</sup>School of Computation, Information and Technology, Technical University of Munich, Germany</small>
                       <br><small><sup>2</sup>Center for Information and Language Processing, Ludwig Maximilian University of Munich, Germany</small>
-                      
+                      <br><small><sup>3</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China</small>
+                      <br><small><sup>&dagger;</sup>Corresponding author: zhenshan.bing@tum.de</small>
                     </span>
                     
                   </div>
@@ -79,7 +86,7 @@
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://github.com/Flakeeeet/capravens/blob/main/paper.pdf" target="_blank"
+                        <a href="https://github.com/Ghiara/DAHLIA" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -93,7 +100,7 @@
 
                   <!-- Github link -->
                   <span class="link-block">
-                    <a href="https://github.com/Flakeeeet/capravens" target="_blank"
+                    <a href="https://github.com/Ghiara/DAHLIA" target="_blank"
                     class="external-link button is-normal is-rounded is-dark">
                     <span class="icon">
                       <i class="fab fa-github"></i>
@@ -291,20 +298,12 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            How can we empower robots to interpret natural language commands and perform complex manipulation tasks across dynamic environments?
-            <br><br>
-            Traditional methods in language-conditioned robot manipulation rely heavily on imitation and reinforcement learning, but these approaches 
-            often face challenges in generalizing to new tasks and environments. Meanwhile, large language models (LLMs) like GPT and Llama have demonstrated 
-            remarkable language comprehension and generalization capabilities, making them a promising alternative for guiding robots in real-time tasks.
-            <br><br>
-            In response, we introduce CapRavens, a novel framework that leverages LLMs as high-level task planners for language-conditioned robot manipulation. 
-            Inspired by <a target="”_blank”" href="https://code-as-policies.github.io/">Code as Policies</a> and 
-            <a target="”_blank”" href="https://cisnlp.github.io/lohoravens-webpage/">LoHoRavens</a>, 
-            CapRavens shifts away from traditional learning methods by using LLMs to parse natural language commands 
-            into modular, reusable motion primitives—actions such as grasping, placing, or aligning objects. With few-shot learning and chain-of-thought prompting, 
-            CapRavens generates interpretable plans and validates execution through a secondary LLM reporter, providing scene feedback for adaptive, iterative planning. 
-            This approach enables CapRavens to perform diverse long-horizon manipulation tasks with high adaptability and minimal training, presenting a promising step towards 
-            generalizable and versatile robotic systems.
+            Recent advancements in natural language-conditioned robotic manipulation have utilized imitation and reinforcement learning to enable robots to perform tasks based on human language commands. 
+However, these methods often struggle with generalization, adaptability, and the scarcity of scalable datasets—unlike the wealth of data available in domains like computer vision—particularly when tackling unstructured, long-horizon manipulation tasks.
+In this work, we introduce DAHLIA, a framework for embodied long-horizon manipulation that leverages large language models (LLMs) to directly interpret high-level language instructions and dynamically generate actionable motion primitives. 
+Unlike data-driven learning-based approaches, DAHLIA eliminates the dependency on extensive training datasets by utilizing the common sense and reasoning capabilities of pre-trained LLMs to dynamically adapt task planning and execution through closed-loop feedback.
+Our approach demonstrates robust performance across a diverse range of long-horizon manipulation tasks, achieving higher success rates in both seen and unseen scenarios. 
+This work paves the way for data-agnostic, generalizable robotic systems. 
           </p>
         </div>
       </div>
@@ -322,10 +321,10 @@
     <!-- Animation. -->
     <div class="rows is-centered " bis_skin_checked="1">
       <div class="row is-full-width" bis_skin_checked="1">
-        <h2 class="title is-3"><span class="dcapravens">CapRavens</span></h2>
+        <h2 class="title is-3"><span class="dcapravens">DAHLIA</span></h2>
 
         <!-- Interpolating. -->
-        <h3 class="title is-4">Architecture</h3>
+        <h3 class="title is-4">Framework Overview</h3>
         <div class="content has-text-justified" bis_skin_checked="1">
           <p>
             Inspired by the framework of <a target="”_blank”" href="https://cisnlp.github.io/lohoravens-webpage/">LoHoRavens</a>, we present a planner-reporter architecture 

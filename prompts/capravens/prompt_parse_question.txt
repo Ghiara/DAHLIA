@@ -1,0 +1,54 @@
+from utils import get_obj_pos, get_obj_rot, get_obj_names, parse_obj_name, bbox_contains_pt, is_obj_visible
+from cliport.utils import utils
+import numpy as np
+
+objects = ['yellow bowl', 'blue block', 'yellow block', 'blue bowl', 'fruit', 'green block', 'black bowl']
+# is the blue block to the right of the yellow bowl?
+ret_val = get_obj_pos('blue block')[1] > get_obj_pos('yellow bowl')[1]
+
+objects = ['yellow bowl', 'blue block', 'yellow block', 'blue bowl', 'fruit', 'green block', 'black bowl']
+# how many yellow objects are there?
+yellow_object_names = parse_obj_name('the yellow objects', f'objects = {get_obj_names()}')
+ret_val = len(yellow_object_names)
+
+objects = ['pink block', 'green block', 'pink bowl', 'blue block', 'blue bowl', 'green bowl']
+# is the pink block on the green bowl?
+ret_val = bbox_contains_pt(container_name='green bowl', obj_name='pink block')
+
+objects = ['pink block', 'green block', 'pink bowl', 'blue block', 'blue bowl', 'green bowl']
+# what are the blocks left of the green bowl?
+block_names = parse_obj_name('the blocks', f'objects = {get_obj_names()}')
+green_bowl_pos = get_obj_pos('green bowl')
+left_block_names = []
+for block_name in block_names:
+  if get_obj_pos(block_name)[1] < green_bowl_pos[1]:
+    left_block_names.append(block_name)
+ret_val = left_block_names
+
+objects = ['pink block', 'yellow block', 'pink bowl', 'blue block', 'blue bowl', 'yellow bowl']
+# is the sun colored block above the blue bowl from perspective of x-axis?
+sun_block_name = parse_obj_name('sun colored block', f'objects = {get_obj_names()}')
+sun_block_pos = get_obj_pos(sun_block_name)
+blue_bowl_pos = get_obj_pos('blue bowl')
+ret_val = sun_block_pos[0] < blue_bowl_pos[0]
+
+objects = ['pink block', 'yellow block', 'pink bowl', 'blue block', 'blue bowl', 'yellow bowl']
+# is the green block below the blue bowl from perspective of z-axis?
+ret_val = get_obj_pos('green block')[2] < get_obj_pos('blue bowl')[2]
+
+objects = ['pink block', 'yellow block', 'pink bowl', 'blue block', 'blue bowl', 'yellow bowl']
+# is one side of the pink block aligned with one side of the yellow block?
+pink_rotation = get_obj_rot('pink block')
+yellow_rotation = get_obj_rot('yellow block')
+pink_euler_angle = utils.quatXYZW_to_eulerXYZ(pink_rotation)
+yellow_euler_angle = utils.quatXYZW_to_eulerXYZ(yellow_rotation)
+x, y, z = yellow_euler_angle
+_, _, ref = pink_euler_angle
+z_normalized = z % (2 * np.pi)
+allowed_rotations = np.array([ref, ref + np.pi/2, ref + np.pi, ref + 3*np.pi/2]) % (2 * np.pi)
+flag = False
+for allowed in allowed_rotations:
+    if np.isclose(z_normalized, allowed, atol=1e-6):
+        flag = True
+        break
+ret_val = flag

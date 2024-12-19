@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+  <!-- Replace the content tag with appropriate information -->
+  <meta name="description" content="DESCRIPTION META TAG">
+  <meta property="og:title" content="SOCIAL MEDIA TITLE TAG"/>
+  <meta property="og:description" content="SOCIAL MEDIA DESCRIPTION TAG TAG"/>
+  <meta property="og:url" content="URL OF THE WEBSITE"/>
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+  <meta property="og:image" content="static/image/your_banner_image.png" />
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+
+
+  <meta name="twitter:title" content="TWITTER BANNER TITLE META TAG">
+  <meta name="twitter:description" content="TWITTER BANNER DESCRIPTION META TAG">
+  <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+  <meta name="twitter:image" content="static/images/your_twitter_banner_image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- Keywords for your paper to be indexed by-->
+  <meta name="keywords" content="KEYWORDS SHOULD BE PLACED HERE">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+  <title>Long-Horizon Language-Conditioned Robot Arm Manipulation with code Generation</title>
+  <link rel="icon" type="image/x-icon" href="static/images/tum_icon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+  rel="stylesheet">
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script src="static/js/bulma-carousel.min.js"></script>
+  <script src="static/js/bulma-slider.min.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+<body>
+
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Long-Horizon Language-Conditioned Robot Arm Manipulation with code Generation</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- Paper authors -->
+              <span class="author-block">
+                <a target="_blank">Haihui Ye</a><sup>1</sup>,</span>
+                <span class="author-block">
+                  <a target="_blank">Shengqiang Zhang</a><sup>2</sup>,</span>
+                  <span class="author-block">
+                    <a target="_blank">Zhenshan Bing</a><sup>1</sup>,</span>
+                    <span class="author-block">
+                      <a target="_blank">Anois Knoll</a><sup>1</sup>,</span>
+                    
+                  </div>
+
+                  <div class="is-size-5 publication-authors">
+                    <span class="author-block">
+                      <small><sup>1</sup>School of Computation, Information and Technology, Technical University of Munich, Germany</small>
+                      <br><small><sup>2</sup>Center for Information and Language Processing, Ludwig Maximilian University of Munich, Germany</small>
+                      
+                    </span>
+                    
+                  </div>
+
+                  <div class="column has-text-centered">
+                    <div class="publication-links">
+                         <!-- Arxiv PDF link -->
+                      <span class="link-block">
+                        <a href="https://github.com/Flakeeeet/capravens/blob/main/paper.pdf" target="_blank"
+                        class="external-link button is-normal is-rounded is-dark">
+                        <span class="icon">
+                          <i class="fas fa-file-pdf"></i>
+                        </span>
+                        <span>Paper</span>
+                      </a>
+                    </span>
+
+                    <!-- Supplementary PDF link -->
+                    
+
+                  <!-- Github link -->
+                  <span class="link-block">
+                    <a href="https://github.com/Flakeeeet/capravens" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+
+                  <!-- Github link -->
+                  
+
+                <!-- ArXiv abstract Link -->
+                <!-- <span class="link-block">
+                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-pyramid">
+          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/stack_all_zone.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-cube">
+          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/stack_same_size.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-circle">
+          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/stack_same_color.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-ball">
+          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/stack_color_size.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-concentric">
+          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/stack_pos_color.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-odd">
+          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/absolute_pos.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-most">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/aboslute_pos_size.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-divide">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/matching_bowl.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-bisector">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/mismatching_bowl.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fixture">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/alternate_color.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-pyramid">
+          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/pyramid.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-cube">
+          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/cube.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-circle">
+          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/circle.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-ball">
+          <video poster="" id="fullbody" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/ball.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-concentric">
+          <video poster="" id="blueshirt" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/concentric.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-odd">
+          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/odd.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-most">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/most.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-divide">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/divide.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-bisector">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/bisector.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fixture">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/fixture.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Teaser video 1-->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      
+      <h2 class="subtitle has-text-justified">
+        <b>Simulation demonstrations of various long-horizon task completion</b>. 
+        In this study, the robot agent is directly controlled by a task planner based on pre-trained LLMs via environment APIs. 
+        Our proposed framework employs a planner-reporter self evaluation architecture to utilize prior knowledge and reasoning ability from LLMs, 
+        allowing it to tackle with long-horizon seen and unseen tasks, and perform self checking,
+        which significantly enhances overall robustness on success rate. 
+        The video showcases both simulation demonstrations in Ravens environment, illustrating that our framework successfully 
+        completes all tasks encountered.
+      </h2>
+    </div>
+  </div>
+</section>
+<!-- End teaser video 1-->
+
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            How can we empower robots to interpret natural language commands and perform complex manipulation tasks across dynamic environments?
+            <br><br>
+            Traditional methods in language-conditioned robot manipulation rely heavily on imitation and reinforcement learning, but these approaches 
+            often face challenges in generalizing to new tasks and environments. Meanwhile, large language models (LLMs) like GPT and Llama have demonstrated 
+            remarkable language comprehension and generalization capabilities, making them a promising alternative for guiding robots in real-time tasks.
+            <br><br>
+            In response, we introduce CapRavens, a novel framework that leverages LLMs as high-level task planners for language-conditioned robot manipulation. 
+            Inspired by <a target="”_blank”" href="https://code-as-policies.github.io/">Code as Policies</a> and 
+            <a target="”_blank”" href="https://cisnlp.github.io/lohoravens-webpage/">LoHoRavens</a>, 
+            CapRavens shifts away from traditional learning methods by using LLMs to parse natural language commands 
+            into modular, reusable motion primitives—actions such as grasping, placing, or aligning objects. With few-shot learning and chain-of-thought prompting, 
+            CapRavens generates interpretable plans and validates execution through a secondary LLM reporter, providing scene feedback for adaptive, iterative planning. 
+            This approach enables CapRavens to perform diverse long-horizon manipulation tasks with high adaptability and minimal training, presenting a promising step towards 
+            generalizable and versatile robotic systems.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+<section class="section">
+  <div class="container is-max-widescreen" bis_skin_checked="1">
+
+    <div class="rows" bis_skin_checked="1">
+
+
+    <!-- Animation. -->
+    <div class="rows is-centered " bis_skin_checked="1">
+      <div class="row is-full-width" bis_skin_checked="1">
+        <h2 class="title is-3"><span class="dcapravens">CapRavens</span></h2>
+
+        <!-- Interpolating. -->
+        <h3 class="title is-4">Architecture</h3>
+        <div class="content has-text-justified" bis_skin_checked="1">
+          <p>
+            Inspired by the framework of <a target="”_blank”" href="https://cisnlp.github.io/lohoravens-webpage/">LoHoRavens</a>, we present a planner-reporter architecture 
+            for language-based task planning with vision-based task evaluations. The LLM planner takes in as input a natural language task goal embedded in a   
+            structured prompt, which instructs the LLM how to write task execution codes properly. Since the LLM is pre-trained with large amounts of text data from the internet,
+            it acts as a powerful knowledge prior for grounding abstract concepts on colors, shapes, positions, arithmetics, etc., and imitates the prompt to output a task code.
+            The reporter is also a multi-model LLM being able to take in images and text queries from the planner, and to return feedback including the scene discription and 
+            evaluation to the planner. 
+          </p>
+        </div>
+        <img src="static/images/architecture.png" class="interpolation-image" alt="Interpolate start reference image.">
+        <br>
+        <br>
+            <b>Paradigm 1:</b> The planner writes task code including various LMPs and APIs based on language
+            instructions, driving motion primitives to do robot manipulations, while the reporter
+            outputs the scene description and task evaluation from observation states with the help of
+            LMPs and APIs. 
+        <br>
+        <br>
+        <br>
+        <!--/ Interpolating. -->
+
+        <!-- Re-rendering. -->
+        <h3 class="title is-4">Prompts</h3>
+        <div class="content has-text-justified" bis_skin_checked="1">
+          <p>
+            We use prompt consisting of several functional parts to instruct the LLM to output reasonable content. These parts are imports,
+            method explanations, orientations, general requirements, task examples and question. Each part is written in Python style and should 
+            guide the LLM to get familiar with the environment where the robot performs task completion, including the way to get information from 
+            the environment, as well as the way to control the objects in the environment.
+
+          </p>
+        </div>
+        <div id="results-carousel" class="carousel results-carousel">
+      
+          <div class="item">
+           <!-- Your image here -->
+           <img src="static/images/import.png" alt="general LRL overview" class="center"/>
+           <h2 class="subtitle has-text-justified">
+             <b>Imports:</b>. 
+             Example of importation that tells the LLM the methods it can directly use, which can also
+             include language model programs (LMPs).
+           </h2>
+         </div>
+   
+         <div class="item">
+           <!-- Your image here -->
+           <img src="static/images/explanation.png" alt="Training" class="center"/>
+           <h2 class="subtitle has-text-justified">
+            <b>Method explanations:</b>
+            Example of API introduction, which emphasizes the data format of arguments and return
+            values.
+           </h2>
+         </div>
+         <div class="item">
+           <!-- Your image here -->
+           <img src="static/images/orientation.png" alt="Deployment" class="center"/>
+           <h2 class="subtitle has-text-justified">
+            <b>Orientations:</b>
+            Example of orientation explanation, which describes the relationship between common
+            orientation expressions and coordinate axes.
+          </h2>
+        </div>
+        <div class="item">
+         <!-- Your image here -->
+         <img src="static/images/requirement.png" alt="Success rate" class="center"/>
+         <h2 class="subtitle has-text-justified">
+           <b>General requirements:</b> 
+           Example of overall requirements.
+         </h2>
+       </div>
+       <div class="item">
+         <!-- Your image here -->
+         <img src="static/images/example.png" alt="t-SNE projection" class="center"/>
+         <h2 class="subtitle has-text-justified">
+           <b>Task examples:</b> 
+           A small set of task examples of increasing difficulty for LMP parse_obj_name(), which should return objects that match the 
+           language discription.
+         </h2>
+       </div>
+       <div class="item">
+        <!-- Your image here -->
+        <img src="static/images/question.png" alt="t-SNE projection" class="center"/>
+        <h2 class="subtitle has-text-justified">
+          <b>Question:</b> 
+          Example of the current task for LMP parse_obj_name().
+        </h2>
+      </div>
+       
+     </div>
+
+        <!--/ Re-rendering. -->
+
+        
+      </div>
+    </div>
+
+  </div>
+</div></section>
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <h2 class="subtitle has-text-justified">
+      <b>Simulation demonstrations in CALVIN Benchmark</b>. 
+      We also test the method in other benchmarks like CALVIN with different robot setup, where the agent needs to perform up to five tasks 
+      in a row according to language instructions.
+    </h2>
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-odd">
+          <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/lift.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-most">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/rotate.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-divide">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/switch.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-bisector">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/drawer.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fixture">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/slide.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Image carousel -->
+
+<!-- End image carousel -->
+
+
+
+
+<!-- Youtube video -->
+<!-- <section class="hero is-small is-light">
+  <div class="hero-body">
+    <div class="container"> -->
+      <!-- Paper video. -->
+      <!-- <h2 class="title is-3">Video Presentation</h2>
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          
+          <div class="publication-video"> -->
+            <!-- Youtube embed code here -->
+            <!-- <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe> -->
+            <!-- <iframe src="https://assets-eu.researchsquare.com/files/rs-4353532/v1/d8c2289d1ccbba09ee8c9558.mp4" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+<!-- End youtube video -->
+
+
+<!-- Video carousel -->
+
+<!-- End video carousel -->
+
+
+
+
+
+
+<!-- Paper poster -->
+
+<!--End paper poster -->
+
+
+<!--BibTex citation -->
+  
+<!--End BibTex citation -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+
+          <p>
+            This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Statcounter tracking code -->
+  
+<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+  </body>
+  </html>

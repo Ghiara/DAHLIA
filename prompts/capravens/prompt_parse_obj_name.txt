@@ -1,0 +1,196 @@
+import numpy as np
+from env_utils import get_obj_pos, get_obj_rot, parse_position
+from utils import get_obj_positions_np, get_obj_rotations_np
+from cliport.utils import utils
+
+# ---------------------------------------------------------------------------
+# Existing Method Explanations
+# ---------------------------------------------------------------------------
+'''
+get_obj_pos(obj) -> [list] # return a list of len(obj) of 3d position-vectors of obj, even when obj is just one object not a list of objects
+get_obj_rot(obj) -> [list] # return a list of len(obj) of 4d quaternion orientation-vectors of obj, even when obj is just one object not a list of objects
+get_obj_positions_np([obj]) -> [list] # return a list of len([obj]) of 3d position-vectors of obj in [obj]
+get_obj_rotations_np([obj]) -> [list] # return a list of len([obj]) of 4d quaternion orientation-vectors of obj in [obj]
+utils.quatXYZW_to_eulerXYZ(rot) -> tuple # convert 4d quaternion orientation-vector to 3d euler angles
+utils.eulerXYZ_to_quatXYZW(rot) -> tuple # convert 3d euler angles orientation-vector to 4d quaternion
+parse_position(query=arg) -> list or tuple # usually return one pose or several poses as a list based on description arg. Possible to demand for wanted return format in arg
+'''
+# ---------------------------------------------------------------------------
+# Orientations in Coordinate System
+# ---------------------------------------------------------------------------
+'''
+left: y-
+right: y+
+front: x+
+rear: x-
+top: z+
+bottom: z-
+top left: x-y-
+bottom left: x+y-
+top right: x-y+
+bottom right: x+y+
+'''
+# ---------------------------------------------------------------------------
+# General Requirements
+# ---------------------------------------------------------------------------
+'''
+You are writing python code for object parsing, refer to the code style in examples below.
+You can use the existing APIs above, you must NOT import other packages.
+Our coordinate system is 3D cartesian system, but still pay attention to the orientations. 
+Also pay attention to the return format requirements in descriptions for some tasks.
+When you are not sure about positions, you had better use parse_position(), and clarify your return format demand.
+'''
+# ---------------------------------------------------------------------------
+# Task Examples
+# ---------------------------------------------------------------------------
+
+objects = ['blue block', 'cyan block', 'purple bowl', 'gray bowl', 'brown bowl', 'pink block', 'purple block']
+# the block closest to the purple bowl.
+block_names = ['blue block', 'cyan block', 'purple block']
+block_positions = get_obj_positions_np(block_names)
+closest_block_idx = get_closest_idx(points=block_positions, point=get_obj_pos('purple bowl')[0])
+closest_block_name = block_names[closest_block_idx]
+ret_val = closest_block_name
+
+objects = ['brown bowl', 'banana with obj_id 1', 'brown block with obj_id 9', 'apple', 'blue bowl with obj_id 8', 'blue block with obj_id 3']
+# the block, return result as list.
+ret_val = ['brown block with obj_id 9', 'blue block with obj_id 3']
+
+objects = ['brown bowl', 'banana with obj_id 1', 'brown block with obj_id 9', 'apple', 'blue bowl with obj_id 8', 'blue block with obj_id 3']
+# the block color, return result as tuple.
+ret_val = ('brown', 'blue')
+
+objects = ['brown block with obj_id 7', 'brown block with obj_id 6', 'brown block with obj_id 9', 'blue block with obj_id 5', 'blue block with obj_id 4', 'red block with obj_id 3']
+# random even number of brown block.
+brown_blocks=['brown block with obj_id 7', 'brown block with obj_id 6', 'brown block with obj_id 9']
+n_brown_block = len(brown_blocks)
+end = n_brown_block
+if n_brown_block % 2 == 1:
+    end += 1
+random_even_number = np.random.choice(np.arange(0, end, 2))
+ret_val = n_brown_block[:random_even_number]
+
+objects = ['brown block with obj_id 7', 'brown block with obj_id 6', 'brown block with obj_id 9', 'blue block with obj_id 5', 'blue block with obj_id 4', 'red block with obj_id 3']
+# maximal even number of brown block.
+brown_blocks=['brown block with obj_id 7', 'brown block with obj_id 6', 'brown block with obj_id 9']
+n_brown_block = len(brown_blocks)
+end = n_brown_block
+if n_brown_block % 2 == 1:
+    end -= 1
+ret_val = n_brown_block[:end]
+
+objects = ['fixed brown zone with obj_id 5', 'banana with obj_id 1', 'brown block with obj_id 9', 'blue zone with obj_id 8', 'blue block with obj_id 3']
+# the zone.
+ret_val = ['fixed brown zone with obj_id 5', 'blue zone with obj_id 8']
+
+objects = ['brown bowl with obj_id 2', 'banana', 'brown block with obj_id 3', 'apple', 'blue bowl', 'blue block']
+# the brown objects.
+ret_val = ['brown bowl with obj_id 2', 'brown block with obj_id 3']
+
+objects = ['brown bowl', 'banana', 'brown block', 'apple', 'blue bowl', 'blue block']
+# a fruit that's not the apple, return result as list
+fruit_names = ['banana', 'apple']
+for fruit_name in fruit_names:
+    if fruit_name != 'apple':
+        ret_val = [fruit_name]
+
+objects = ['cyan block with obj_id 3', 'purple block with obj_id 6', 'brown block with obj_id 8', 'purple block with obj_id 7']
+# cyan block, return result as one str.
+ret_val = 'cyan block with obj_id 3'
+
+objects = ['blue block', 'fixed cyan block', 'purple bowl', 'brown bowl', 'purple block']
+# blocks above the brown bowl.
+block_names = ['blue block', 'fixed cyan block', 'purple block']
+brown_bowl_pos = get_obj_pos('brown bowl')[0]
+use_block_names = []
+for block_name in block_names:
+    if get_obj_pos(block_name)[0][2] > brown_bowl_pos[2]:
+        use_block_names.append(block_name)
+ret_val = use_block_names
+
+objects = ['blue block', 'cyan block', 'purple bowl', 'brown bowl', 'purple block']
+# the block closest to the bottom right corner.
+corner_pos = parse_position('bottom right corner')
+block_names = ['blue block', 'cyan block', 'purple block']
+block_positions = get_obj_positions_np(block_names)
+closest_block_idx = get_closest_idx(points=block_positions, point=corner_pos)
+closest_block_name = block_names[closest_block_idx]
+ret_val = closest_block_name
+
+objects = ['fixed yellow zone with obj_id 5', 'movable purple block with obj_id 6', 'movable green block with obj_id 7', 'movable blue block with obj_id 8', 'movable silver block with obj_id 9', 'movable cyan block with obj_id 10']
+# the blocks to the left of the purple block with horizontal distance larger than 0.1.
+block_names = ['movable purple block with obj_id 6', 'movable green block with obj_id 7', 'movable blue block with obj_id 8', 'movable silver block with obj_id 9', 'movable cyan block with obj_id 10']
+purple_block_pos = get_obj_pos('movable purple block with obj_id 6')[0]
+use_block_names = []
+for block_name in block_names:
+    if get_obj_pos(block_name)[0][1] + 0.1 < purple_block_pos[1]:
+        use_block_names.append(block_name)
+ret_val = use_block_names
+
+objects = ['fixed yellow zone with obj_id 5', 'movable purple block with obj_id 6', 'movable green block with obj_id 7', 'movable blue block with obj_id 8', 'movable silver block with obj_id 9', 'movable cyan block with obj_id 10']
+# the blocks in front of the purple block with vertical distance larger than 0.2.
+block_names = ['movable purple block with obj_id 6', 'movable green block with obj_id 7', 'movable blue block with obj_id 8', 'movable silver block with obj_id 9', 'movable cyan block with obj_id 10']
+purple_block_pos = get_obj_pos('movable purple block with obj_id 6')[0]
+use_block_names = []
+for block_name in block_names:
+    if get_obj_pos(block_name)[0][0] - 0.2 > purple_block_pos[0]:
+        use_block_names.append(block_name)
+ret_val = use_block_names
+
+objects = ['brown bowl', 'green block', 'brown block', 'green bowl', 'blue bowl', 'blue block']
+# the left most block.
+block_names = ['green block', 'brown block', 'blue block']
+block_positions = get_obj_positions_np(block_names)
+left_block_idx = np.argsort(block_positions[:, 1])[0]
+left_block_name = block_names[left_block_idx]
+ret_val = left_block_name
+
+objects = ['blue block', 'cyan block', 'purple bowl', 'brown bowl', 'purple block']
+# the block in the bottom right area.
+blocks = ['blue block', 'cyan block', 'purple block']
+block_positions = get_obj_positions_np(blocks)
+x_min, y_min, x_max, y_max = parse_position('the 2d bounding box of the bottom right area, return result as list of [x_min, y_min, x_max, y_max]')
+bottom_right_blocks = []
+for i, pos in enumerate(block_positions):
+    if x_min < pos[0] < x_max and y_min < pos[1] < y_max:
+        bottom_right_blocks.append(blocks[i])
+ret_val = bottom_right_blocks
+
+objects = ['brown bowl', 'green block', 'brown block', 'green bowl', 'blue bowl', 'blue block']
+# the bowl on near the top.
+bowl_names = ['brown bowl', 'green bowl', 'blue bowl']
+bowl_positions = get_obj_positions_np(bowl_names)
+top_bowl_idx = np.argsort(bowl_positions[:, 0])[0]
+top_bowl_name = bowl_names[top_bowl_idx]
+ret_val = top_bowl_name
+
+objects = ['yellow bowl', 'purple block', 'yellow block', 'purple bowl', 'pink bowl', 'pink block']
+# the third bowl from the right.
+bowl_names = ['yellow bowl', 'purple bowl', 'pink bowl']
+bowl_positions = get_obj_positions_np(bowl_names)
+bowl_idx = np.argsort(bowl_positions[:, 1])[-3]
+bowl_name = bowl_names[bowl_idx]
+ret_val = bowl_name
+
+objects = ['movable yellow block with obj_id 5', 'movable yellow block with obj_id 6', 'movable brown block with obj_id 7', 'movable brown block with obj_id 8', 'movable purple block with obj_id 9', 'movable red block with obj_id 10', 'movable blue block with obj_id 11', 'movable blue block with obj_id 12', 'movable blue block with obj_id 13', 'movable blue block with obj_id 14', 'movable blue block with obj_id 15', 'movable blue block with obj_id 16', 'fixed zone with obj_id 17']
+# the blocks with the highest number share the same color, return result as list.
+ret_val = ['movable blue block with obj_id 11', 'movable blue block with obj_id 12', 'movable blue block with obj_id 13', 'movable blue block with obj_id 14', 'movable blue block with obj_id 15', 'movable blue block with obj_id 16']
+
+objects = ['yellow block', 'purple block', 'fixed pink block', 'red fixture']
+# the block with four sides aligned with the desktop sides from perspective of z-axis.
+block_names = ['yellow block', 'purple block', 'fixed pink block']
+block_rotations = get_obj_rotations_np(block_names)
+use_block_names = []
+for i, rot in enumerate(block_rotations):
+    euler_rotation = utils.quatXYZW_to_eulerXYZ(rot)
+    x, y, z = euler_rotation
+    z_normalized = z % (2 * np.pi)
+    allowed_rotations = [0, np.pi/2, np.pi, 3*np.pi/2]
+    for allowed in allowed_rotations:
+        if np.isclose(z_normalized, allowed, atol=1e-6):
+            use_block_names.append(block_names[i])
+ret_val = use_block_names
+
+# ---------------------------------------------------------------------------
+# Question
+# ---------------------------------------------------------------------------

@@ -1,0 +1,7 @@
+A runtime error occurs when running the code you have written just now, the traceback is as follows.
+
+TASK_CODE_ERROR
+
+If there's 'File "<string>"' in traceback, it represents your code.
+You may refer to what we talked about before to think about the cause of error.
+Now please renew the code and write the corrected code in python code block starting with ```python.

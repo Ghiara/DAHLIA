@@ -1,0 +1,552 @@
+# Python desktop 3D robot control script
+import numpy as np
+from env_utils put_first_on_second, get_obj_pos, get_obj_rot, get_obj_names, say, reset, get_corner_name, get_bbox, get_side_name, is_obj_visible, stack_objects_in_order, is_target_occupied, get_random_free_pos, get_obj_pos_dict
+from plan_utils import parse_obj_name, parse_position, parse_question, transform_shape_pts, parse_completion
+from cliport.utils import utils
+
+# ---------------------------------------------------------------------------
+# Existing Method Explanations
+# ---------------------------------------------------------------------------
+'''
+put_first_on_second(arg1 , arg2) # let robot put arg1 to arg2
+get_obj_pos(obj) -> [list] # return a list of len(obj) of 3d position-vectors of obj, even when obj is just one object not a list of objects
+get_obj_rot(obj) -> [list] # return a list of len(obj) of 4d quaternion orientation-vectors of obj, even when obj is just one object not a list of objects
+get_obj_names(arg) -> str or [str] # return the object name of arg in string type; return all object names in a list when not inputting arg
+get_corner_name(pos) -> str # return the corner name of pos, in ['top left corner', 'top right corner', 'bottom left corner', 'botom right corner']
+get_side_name(pos) -> str # return the side name of pos, in ['top side', 'right side', 'bottom side', 'left side']
+get_bbox([obj] or obj) -> tuple # return the bounding box size of [obj][0] or obj in form of (size_x, size_y, size_z)
+get_obj_pos_dict() -> dict # return all the objects and their final poses in the form like {objectname: [3d position, 3d euler angle], ...}
+is_obj_visible(obj) -> boolean # return whether the obj exists
+is_target_occupied(targ=pos or obj, r=0.02) -> list[str] # return the list of object names that occpuy the position of given pos or obj within range r. Only one target to be checked once
+get_random_free_pos(targ=pos or obj, r=0.02, search_area=bounding box, grid_size=0.002) -> list[list] # return a random pose tuple (positon,rotation) in specified search_area (should be in form of denormalized (x_min, y_min, x_max, y_max), when None then whole desktop) that is not occupied by given targ (pos or obj) as well as any other objects within range r
+utils.quatXYZW_to_eulerXYZ(rot) -> tuple # convert 4d quaternion orientation-vector to 3d euler angles
+utils.eulerXYZ_to_quatXYZW(rot) -> tuple # convert 3d euler angles orientation-vector to 4d quaternion
+utils.apply(arg1, arg2) -> tuple # given an object's world coordinate pose arg1 formed as (position, rotation) and a position arg2 in the object's local coordinate system, return the world coordinate position of arg2 
+parse_obj_name(query=str1, context=str2) -> list or str # usually return a list of str or just one str that is chosen out from str2 according to str1 which performs as description. Possible to demand for wanted return format in str1
+parse_position(query=arg) -> list or tuple # usually return one pose or several poses as a list based on description arg. Possible to demand for wanted return format in arg
+parse_completion(str1, str2) -> boolean # return whether the current task described by str1 is fully completed based on str2 
+'''
+# ---------------------------------------------------------------------------
+# Orientations in Coordinate System
+# ---------------------------------------------------------------------------
+'''
+left: y-
+right: y+
+front: x+
+rear: x-
+top: z+
+bottom: z-
+top left: x-y-
+bottom left: x+y-
+top right: x-y+
+bottom right: x+y+
+'''
+# ---------------------------------------------------------------------------
+# General Requirements
+# ---------------------------------------------------------------------------
+'''
+You are writing python code for robot manipulating, refer to the code style in examples below.
+If the task requires completion check then check completion.
+You can use the existing APIs above, you must NOT import other packages.
+Our coordinate system is 3D cartesian system, but still pay attention to the orientations. 
+Object sizes are important in some tasks as they determine object positions, so remember to get them in advance.
+When you are not sure about objects or positions, you had better use parse_obj_name() and parse_position(), and clarify your return format demand.
+'''
+# ---------------------------------------------------------------------------
+# Task Examples
+# ---------------------------------------------------------------------------
+
+objects = ['yellow block with obj_id 1', 'blue bowl with obj_id 3', 'green bowl with obj_id 6']
+# place the yellow block at ((0.4,0.1,0.02),(0,0,0,1)).
+say('Ok - placing the yellow block at ((0.4,0.1,0.02),(0,0,0,1))')
+target_pos = ((0.4,0.1,0.02),(0,0,0,1))
+# check if target is occupied by any object
+obj = is_target_occupied(target_pos)
+# if occupied, move all occupying objects to a random place first
+if obj:
+    put_first_on_second(obj,get_random_free_pos(targ=target_pos))
+put_first_on_second('yellow block with obj_id 1', target_pos)
+
+objects = ['yellow block with obj_id 1', 'blue bowl with obj_id 3', 'green bowl with obj_id 6']
+# place the yellow block at the top right area.
+say('placing the yellow blocks in the top right area')
+blocks = parse_obj_name('movable yellow blocks, return result as list of object names', f'objects = {get_obj_names()}')
+area = parse_position('the 2d bounding box of the top right area, return result as list of [x_min, y_min, x_max, y_max]')
+for block in blocks:
+    pos = get_random_free_pos(targ=None, search_area=area)
+    put_first_on_second(block, pos)
+
+objects = ['yellow block with obj_id 1', 'blue bowl with obj_id 3', 'green bowl with obj_id 6']
+# place the yellow block at the top right corner. Finally check the completion of task.
+say('placing the yellow blocks in the top right area')
+blocks = parse_obj_name('movable yellow blocks, return result as list of object names', f'objects = {get_obj_names()}')
+area = parse_position('the 2d bounding box of the top right area, return result as list of [x_min, y_min, x_max, y_max]')
+for block in blocks:
+    pos = get_random_free_pos(targ=None, search_area=area)
+    put_first_on_second(block, pos)
+if not parse_completion('the yellow block at the top right corner', f'object_positions = {get_obj_pos_dict()}'):
+    say('trying again placing the yellow blocks in the top right area')
+    # initialize the task scene for trying again
+    reset()
+    blocks = parse_obj_name('movable yellow blocks, return result as list of object names', f'objects = {get_obj_names()}')
+    area = parse_position('the 2d bounding box of the top right area, return result as list of [x_min, y_min, x_max, y_max]')
+    for block in blocks:
+        pos = get_random_free_pos(targ=None, search_area=area)
+        put_first_on_second(block, pos)
+
+objects = ['yellow block with obj_id 1', 'blue zone with obj_id 3', 'green block with obj_id 6']
+# place two blocks each on the left and right edge of the zone.
+say('Ok - placing the blocks at left and right side of the zone')
+blocks = parse_obj_name('movable blocks, return result as list of object names', f'objects = {get_obj_names()}')
+zone = parse_obj_name('zone, return result as one str of object name', f'objects = {get_obj_names()}')
+if isinstance(zone, list):
+    zone = zone[0]
+zone_pos = get_obj_pos(zone)[0]
+zone_rot = get_obj_rot(zone)[0]
+# query object size before action
+zone_size = get_bbox(zone)
+target_left = (utils.apply((zone_pos,zone_rot), (-zone_size[0]/2,0,0)), zone_rot)
+target_right = (utils.apply((zone_pos,zone_rot), (zone_size[0]/2,0,0)), zone_rot)
+put_first_on_second(blocks[0], target_left)
+put_first_on_second(blocks[1], target_right)
+
+objects = ['yellow block with obj_id 2', 'yellow block with obj_id 3', 'green bowl with obj_id 4', 'yellow block with obj_id 5']
+# place the third and the first yellow block each at ((0.4,0.1,0.02),(0,0,0,1)) and ((0.5,-0.1,0.02),(0,0,0,-1)).
+say('Ok - placing two yellow blocks each with assigned position and orientation')
+yellow_blocks = parse_obj_name('the third and the first yellow block, return result as list of object names', f'objects = {get_obj_names()}')
+target_poses = [((0.4,0.1,0.02),(0,0,0,1)),((0.5,-0.1,0.02),(0,0,0,-1))]
+objs = is_target_occupied(target_poses)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ = target_poses)) 
+put_first_on_second(yellow_blocks[0], target_poses[0])
+put_first_on_second(yellow_blocks[1], target_poses[1])
+
+objects = ['yellow block with obj_id 8', 'green block with obj_id 3', 'yellow bowl with obj_id 0']
+# put all the blocks which are in the bottom right area in the yellow bowl.
+say('Ok - putting the blocks in the bottom right area in the yellow bowl')
+blocks = parse_obj_name('movable blocks in the bottom right area, return result as list of object names', f'objects = {get_obj_names()}')
+yellow_bowl = parse_obj_name('yellow bowl, return result as one str of object name', f'objects = {get_obj_names()}')
+if isinstance(yellow_bowl, list):
+    yellow_bowl = yellow_bowl[0]
+for block in blocks:
+    put_first_on_second(block, yellow_bowl)
+
+objects = ['yellow block with obj_id 4', 'fixed yellow zone with obj_id 9', 'fixed blue block with obj_id 2', 'fixed blue zone with obj_id 12']
+# are there any yellow blocks in the blue zone?
+blocks = parse_obj_name('yellow blocks that are in the blue zone, return result as list', f'objects = {get_obj_names()}')
+if not blocks:
+    say('No, there isn't any yellow block in the blue zone')
+else:
+    say('Yes, there are {len(blocks)} yellow blocks in the blue zone')
+
+objects = ['yellow block with obj_id 4', 'fixed yellow zone with obj_id 9', 'fixed blue block with obj_id 2', 'fixed blue zone with obj_id 12']
+# the yellow block in the blue zone.
+say('Ok - putting the yellow block in the blue zone')
+put_first_on_second('yellow block with obj_id 4', 'fixed blue zone with obj_id 12')
+
+objects = ['yellow block with obj_id 4', 'fixed yellow zone with obj_id 9', 'fixed blue block with obj_id 2', 'fixed blue zone with obj_id 12']
+# the yellow block in the blue zone. Finally check the completion of task.
+say('Ok - putting the yellow block in the blue zone')
+put_first_on_second('yellow block with obj_id 4', 'fixed blue zone with obj_id 12')
+if not parse_completion('the yellow block in the blue zone', f'object_positions = {get_obj_pos_dict()}'):
+    say('trying again putting the yellow block in the blue zone')
+    reset()
+    put_first_on_second('yellow block with obj_id 4', 'fixed blue zone with obj_id 12')
+
+objects = ['yellow block with obj_id 4', 'fixed yellow zone with obj_id 9', 'fixed red zone with obj_id 2', 'blue block with obj_id 12', 'cyan block']
+# put each block in a zone with a different color.
+say('Ok - putting the blocks in a zone with different color')
+zone_names = parse_obj_name('the zones, return result as list', f'objects = {get_obj_names()}')
+block_names = parse_obj_name('the movable blocks, return result as list', f'objects = {get_obj_names()}')
+zone_colors = parse_obj_name('zone colors, return result as list', f'objects = {zone_names}')
+for block in block_names:
+    block_color = parse_obj_name('block color, return result as one str', f'objects = "{block}"')
+    if isinstance(block_color, list):
+        block_color = block_color[0]
+    zone_color = random_choice_except(zone_colors, block_color)
+    zone = parse_obj_name(f'the {zone_color} zone, return result as one str', f'objects = {zone_names}')
+    if isinstance(zone, list):
+        zone = zone[0]
+    put_first_on_second(block, zone)
+
+objects = ['yellow block with obj_id 4', 'fixed yellow zone with obj_id 9', 'blue block with obj_id 2', 'fixed blue zone with obj_id 12']
+# stack one color of blocks that has the largest quantity in the blue zone.
+say('Ok - stacking the blocks in the blue zone')
+# directly get one color of blocks that has the largest quantity
+blocks = parse_obj_name('one color of blocks that has the largest quantity, return result as list', f'objects = {get_obj_names()}')
+objs = is_target_occupied('fixed blue zone with obj_id 12')
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ='fixed blue zone with obj_id 12')) 
+stack_objects_in_order(object_names=blocks, targ='fixed blue zone with obj_id 12')
+
+objects = ['yellow block', 'fixed yellow zone', 'blue block with obj_id 2', 'fixed blue zone with obj_id 12','blue block with obj_id 3']
+# stack all the blocks in their corresponding zone.
+say('stack all blocks in their corresponding zones')
+zones = parse_obj_name('zone, return result as list', f'objects = {get_obj_names()}')
+blocks = parse_obj_name('movable block, return result as list', f'objects = {get_obj_names()}')
+for zone in zones:
+    zone_color = parse_obj_name('zone color, return result as one str', f'objects = "{zone}"')
+    zone_blocks = []
+    for block in blocks:
+        if zone_color in block:
+            zone_blocks.append(block)
+    stack_objects_in_order(zone_blocks, zone)
+
+objects = ['fixed blue zone with obj_id 5', 'movable green block with obj_id 6', 'movable purple block with obj_id 7', 'movable cyan block with obj_id 8', 'movable indigo block with obj_id 9', 'movable blue block with obj_id 10']
+# Stack all the blocks which are to the rear of the green block in the blue zone.
+say('Stacking all blocks to the rear of the green block in the blue zone')
+blue_zone = parse_obj_name('blue zone, return result as one str', f'objects = {get_obj_names()}')
+if isinstance(blue_zone, list):
+    blue_zone = blue_zone[0]
+blocks_to_stack = parse_obj_name('movable blocks to the rear of the green block, return result as list', f'objects = {get_obj_names()}')
+objs = is_target_occupied(blue_zone)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj, get_random_free_pos(targ=blue_zone))
+stack_objects_in_order(blocks_to_stack, blue_zone)
+
+objects = ['fixed red zone with obj_id 5', 'fixed blue zone with obj_id 6', 'small cyan cylinder with obj_id 7', 'small yellow cylinder with obj_id 8', 'small blue cylinder with obj_id 9', 'large cyan cylinder with obj_id 10', 'large yellow cylinder with obj_id 11', 'large blue cylinder with obj_id 12']
+# Sort six cylinders into two groups based on their sizes (three small and three large) and colors (cyan, blue, yellow for each size group), then stack each group in its corresponding colored zone (red for small, blue for large) with a specific color order: cyan at the bottom, then yellow, and finally blue on top.
+say('Ok - sorting the cylinders into two groups based on their sizes and stacking them in the corresponding zones')
+small_cylinders = parse_obj_name('small cylinders, return result as list', f'objects = {get_obj_names()}')
+large_cylinders = parse_obj_name('large cylinders, return result as list', f'objects = {get_obj_names()}')
+red_zone = parse_obj_name('red zone, return result as one str', f'objects = {get_obj_names()}')
+if type(red_zone) == list:
+    red_zone = red_zone[0]
+objs = is_target_occupied(red_zone)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ=red_zone)) 
+blue_zone = parse_obj_name('blue zone, return result as one str', f'objects = {get_obj_names()}')
+if type(blue_zone) == list:
+    blue_zone = blue_zone[0]
+objs = is_target_occupied(blue_zone)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ=blue_zone)) 
+cylinder_colors = ['cyan', 'yellow', 'blue']
+sorted_small_cylinders=[]
+sorted_large_cylinders=[]
+for color in cylinder_colors:
+    for cylinder in small_cylinders:
+        if color in cylinder:
+            sorted_small_cylinders.append(cylinder)
+    for cylinder in large_cylinders:
+        if color in cylinder:
+            sorted_large_cylinders.append(cylinder)
+stack_objects_in_order(sorted_small_cylinders, red_zone)
+stack_objects_in_order(sorted_large_cylinders, blue_zone)
+
+objects = ['movable red block with obj_id 0', 'movable red block with obj_id 1', 'fixed red block with obj_id 2', 'movable red block with obj_id 3', 'blue zone with obj_id 4', 'movable red block with obj_id 5', 'red zone with obj_id 6']
+# form a 2*2 red square in center of the zone.
+say('Ok - trying to from a 2*2 red square in the zone. If there are more than 1 zones, I will randomly choose one')
+red_blocks = parse_obj_name('movable objects that can form a 2*2 red square, return result as list', f'objects = {get_obj_names()}')
+zone = parse_obj_name('zone, return result as one str', f'objects = {get_obj_names()}')
+if type(zone) == list:
+    zone = zone[0]
+objs = is_target_occupied(zone)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ=zone)) 
+square_center = get_obj_pos(zone)[0]
+zone_orientation = get_obj_rot(zone)[0]
+# query object size before action
+block_size = np.array(get_bbox(red_blocks))
+# times 1.5 to ensure the blocks won't conflict with one another
+half_diagonal = 1.5 * np.linalg.norm(block_size[:2]/2)
+target_poses = parse_position(f'four corners around the center {square_center} in x-y plane with distance of {0.8*half_diagonal} and quaternion orientation of {zone_orientation}')
+for i in range(4):
+    put_first_on_second(red_blocks[i], target_poses[i])
+
+objects = ['movable red block with obj_id 0', 'movable red block with obj_id 1', 'fixed red block with obj_id 2', 'movable red block with obj_id 3', 'blue zone with obj_id 4', 'movable red block with obj_id 5', 'movable red block with obj_id 7', 'movable red block with obj_id 8', 'red zone with obj_id 6']
+# form a 2*2*2 red cube in center of the zone.
+say('Ok - trying to from a 2*2*2 red cube in the zone. If there are more than 1 zones, I will randomly choose one')
+red_blocks = parse_obj_name('movable objects that can form a 2*2*2 red cube, return result as list', f'objects = {get_obj_names()}')
+zone = parse_obj_name('zone, return result as one str', f'objects = {get_obj_names()}')
+if type(zone) == list:
+    zone = zone[0]
+objs = is_target_occupied(zone)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ=zone)) 
+square_center = get_obj_pos(zone)[0]
+zone_orientation = get_obj_rot(zone)[0]
+# query object size before action
+block_size = np.array(get_bbox(red_blocks))
+cube_center = np.array(square_center) + [0,0,block_size[2]]
+# times 1.5 to ensure the blocks won't conflict with one another
+half_diagonal = 1.5 * np.linalg.norm(block_size/2)
+target_poses = parse_position(f'eight corners around the center {cube_center} in x-y-z space with distance of {0.8*half_diagonal} and quaternion orientation of {zone_orientation}')
+for i in range(8):
+    put_first_on_second(red_blocks[i], target_poses[i])
+
+objects = ['yellow block with obj_id 8', 'green block with obj_id 1', 'yellow bowl with obj_id 2', 'blue block with obj_id 3', 'blue bowl with obj_id 4', 'green bowl with obj_id 5']
+# stack the blue bowl on the yellow bowl on the green block.
+order_bottom_to_top = ['green block with obj_id 1', 'yellow block with obj_id 8', 'blue bowl with obj_id 4']
+say(f'Sure - stacking from top to bottom: {", ".join(order_bottom_to_top)}')
+stack_objects_in_order(object_names=order_bottom_to_top)
+
+objects = ['cyan block with obj_id 2', 'cyan block with obj_id 3', 'cyan bowl with obj_id 4', 'blue block with obj_id 5', 'blue bowl with obj_id 6', 'white bowl with obj_id 7']
+# move the cyan block into its corresponding bowl.
+matches = {
+           'cyan block with obj_id 2': 'cyan bowl with obj_id 4',
+           'cyan block with obj_id 3': 'cyan bowl with obj_id 4'
+          }
+say('Got it - placing two cyan blocks in the cyan bowl')
+for first, second in matches.items():
+    put_first_on_second(first, get_obj_pos(second))
+  
+objects = ['movable cyan block with obj_id 0', 'movable white block with obj_id 1', 'fixed cyan block with obj_id 10', 'movable blue block with obj_id 2', 'movable blue container with obj_id 6']
+# make a line of blocks on the right side.
+say('No problem! Making a line of blocks on the right side')
+block_names = parse_obj_name('the movable blocks, return result as list', f'objects = {get_obj_names()}')
+line_pts = parse_position(f'a vertical line on the right with {len(block_names)} points')
+for block_name, pt in zip(block_names, line_pts):
+    put_first_on_second(block_name, pt)
+
+objects = ['yellow block with obj_id 8', 'red block with obj_id 1', 'fixed blue bowl with obj_id 5', 'fixed green block with obj_id 2']
+# put the small banana colored thing in between the blue bowl and green block.
+say('Sure thing - putting the yellow block between the blue bowl and the green block')
+target_pos = parse_position('a point in the middle betweeen the blue bowl and the green block')
+put_first_on_second('yellow block', target_pos)
+
+objects = ['yellow block with obj_id 4', 'red block with obj_id 8', 'yellow bowl with obj_id 1', 'gray block with obj_id 3']
+# can you cut the bowls in half.
+say('no, I can only move objects around')
+
+objects = ['fixed yellow block with obj_id 0', 'movable red block with obj_id 9', 'fixed yellow bowl with obj_id 7', 'fixed gray zone with obj_id 5', 'movable gray container with obj_id 3']
+# put the yellow block in the gray zone.
+say('sorry, I can only move unfixed objects')
+
+objects = ['yellow block', 'green block', 'yellow bowl', 'gray block', 'gray bowl', 'green bowl']
+# stack the blocks on the right side with the gray one on the bottom.
+say('Ok. stacking the blocks on the right side with the gray block on the bottom')
+right_side = parse_position('the right side')
+put_first_on_second('gray block', right_side)
+order_bottom_to_top = ['gray block', 'green block', 'yellow block']
+stack_objects_in_order(object_names=order_bottom_to_top)
+
+objects = ['yellow block', 'green block', 'yellow bowl', 'blue block', 'blue bowl', 'green bowl']
+# hide the blue bowl.
+bowl_name = np.random.choice(['yellow bowl', 'green bowl'])
+say(f'Sounds good! Hiding the blue bowl under the {bowl_name}')
+put_first_on_second(bowl_name, 'blue bowl')
+
+objects = ['pink block', 'green block', 'pink bowl', 'blue block', 'blue bowl', 'green bowl']
+# stack everything with the green block on top.
+say('Ok! Stacking everything with the green block on the top')
+order_bottom_to_top = ['blue bowl', 'pink bowl', 'green bowl', 'pink block', 'blue block', 'green block']
+stack_objects_in_order(object_names=order_bottom_to_top)
+
+objects = ['brown bowl', 'green block', 'brown block', 'green bowl', 'blue bowl', 'blue block']
+# place the top most block to the corner closest to the bottom most block.
+top_block_name = parse_obj_name('top most block, return result as one str', f'objects = {get_obj_names()}')
+bottom_block_name = parse_obj_name('bottom most block, return result as one str', f'objects = {get_obj_names()}')
+closest_corner_pos = parse_position(f'the corner closest to the {bottom_block_name}', f'objects = {get_obj_names()}')
+say(f'Putting the {top_block_name} on the {get_corner_name(closest_corner_pos)}')
+put_first_on_second(top_block_name, closest_corner_pos)
+
+objects = ['brown bowl', 'green block', 'brown block', 'green bowl', 'blue bowl', 'blue block']
+# move the brown bowl to the side closest to the green block.
+closest_side_position = parse_position('the side closest to the green block')
+say(f'Got it - putting the brown bowl on the {get_side_name(closest_side_position)}')
+put_first_on_second('brown bowl', closest_side_position)
+
+objects = ['brown bowl', 'green block', 'brown block', 'green bowl', 'blue bowl', 'blue block']
+# place the green block to the right of the bowl that has the blue block.
+bowl_name = parse_obj_name('the bowl that has the blue block', f'objects = {get_obj_names()}')
+if bowl_name:
+    target_pos = parse_position(f'a point 10cm to the right of the {bowl_name}')
+    say(f'No problem - placing the green block to the right of the {bowl_name}')
+    put_first_on_second('green block', target_pos)
+else:
+    say('There are no bowls that has the blue block')
+
+objects = ['brown bowl', 'green block', 'brown block', 'green bowl', 'blue bowl', 'blue block']
+# place the blue block in the empty bowl.
+empty_bowl_name = parse_obj_name('the empty bowl, return result as one str', f'objects = {get_obj_names()}')
+if empty_bowl_name:
+    say(f'Ok! Putting the blue block on the {empty_bowl_name}')
+    put_first_on_second('blue block', empty_bowl_name)
+else:
+    say('There are no empty bowls')
+
+objects = ['yellow bowl', 'blue block', 'yellow block', 'blue bowl']
+# is the blue block to the right of the yellow bowl?
+if parse_question('is the blue block to the right of the yellow bowl?', f'objects = {get_obj_names()}'):
+    say('yes, there is a blue block to the right of the yellow bow')
+else:
+    say('no, there is\'t a blue block to the right of the yellow bow')
+
+objects = ['yellow bowl', 'blue block', 'yellow block', 'blue bowl']
+# how many yellow objects are there?
+n_yellow_objs = parse_question('how many yellow objects are there', f'objects = {get_obj_names()}')
+say(f'there are {n_yellow_objs} yellow object')
+
+objects = ['pink block', 'green block', 'pink bowl', 'blue block', 'blue bowl', 'green bowl']
+# move the left most block to the green bowl.
+left_block_name = parse_obj_name('left most block, return result as one str', f'objects = {get_obj_names()}')
+say(f'Moving the {left_block_name} on the green bowl')
+put_first_on_second(left_block_name, 'green bowl')
+
+objects = ['pink block', 'green block', 'pink bowl', 'blue block', 'blue bowl', 'green bowl']
+# what are the blocks left of the green bowl.
+left_block_names =  parse_question('what are the blocks left of the green bowl', f'objects = {get_obj_names()}')
+if len(left_block_names) > 0:
+    say(f'These blocks are left of the green bowl: {", ".join(left_block_names)}')
+else:
+    say('There are no blocks left of the green bowl')
+
+objects = ['pink block', 'green block', 'pink bowl', 'blue block', 'blue bowl', 'green bowl']
+# if you see a purple bowl put it on the blue bowl
+if is_obj_visible('purple bowl'):
+    say('Putting the purple bowl on the pink bowl')
+    put_first_on_second('purple bowl', 'pink bowl')
+else:
+    say('I don\'t see a purple bowl')
+
+objects = ['yellow block', 'green block', 'yellow bowl', 'blue block', 'blue bowl', 'green bowl']
+# imagine that the bowls are different biomes on earth and imagine that the blocks are parts of a building.
+say('ok')
+objects = ['yellow block', 'green block', 'yellow bowl', 'blue block', 'blue bowl', 'green bowl']
+# now build a tower in the grasslands.
+order_bottom_to_top = ['green bowl', 'blue block', 'green block', 'yellow block']
+say('stacking the blocks on the green bowl')
+stack_objects_in_order(object_names=order_bottom_to_top)
+objects = ['yellow block', 'green block', 'yellow bowl', 'gray block', 'gray bowl', 'green bowl']
+# show me what happens when the desert gets flooded by the ocean.
+say('putting the blue bowl on the yellow bowl')
+put_first_on_second('blue bowl', 'yellow bowl')
+
+objects = ['fixed cyan block', 'white block', 'purple zone', 'blue block', 'red block', 'silver block']
+# make a largest circle of blocks in the zone.
+blocks = parse_obj_name('the movable blocks, return result as list', f'objects = {get_obj_names()}')
+zone = parse_obj_name('zone, return result as one str', f'objects = {get_obj_names()}')
+objs = is_target_occupied(zone)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ=zone)) 
+circle_center = get_obj_pos(zone)[0]
+# query object size before action
+block_size = np.array(get_bbox(blocks))
+zone_size = np.array(get_bbox(zone))
+radius = np.min(zone_size[:2])/2
+circle_pts = parse_position(f'a circle with radius {radius} around the center {circle_center} with {len(blocks)} points, return result as a list of tuple(pos, rot)')
+say('Making the largest circle of blocks in the zone')
+for block_name, pt in zip(block_names, circle_pts):
+    # pt is already a pose including position and rotation  
+    put_first_on_second(block_name, pt)
+
+objects = ['movable cyan block with obj_id 5', 'movable cyan block with obj_id 6', 'movable cyan block with obj_id 7', 'movable cyan block with obj_id 8', 'movable cyan block with obj_id 9', 'fixed 2x scaled zone with obj_id 10']
+# build a 4-1 two storey rectangular pyramid in the zone.
+say('Constructing a 4-1 rectangular pyramid structure in the zone using 5 blocks')
+blocks = parse_obj_name('movable blocks, return result as list', f'objects = {get_obj_names()}')
+zone = parse_obj_name('zone, return result as one str', f'objects = {get_obj_names()}')
+objs = is_target_occupied(zone)
+if objs:
+    for obj in objs:
+        put_first_on_second(obj,get_random_free_pos(targ=zone))
+# Get the position and rotation of the zone
+zone_pos = get_obj_pos(zone)[0]
+zone_rot = get_obj_rot(zone)[0]
+# Query object size before action
+block_size = np.array(get_bbox(blocks))
+# Calculate the base positions for the pyramid
+base_width = 2 * block_size[0]  # 2 blocks wide
+base_depth = 2 * block_size[1]   # 2 blocks deep
+height = block_size[2]       # height of one block
+# Calculate the positions for the base layer (4 blocks)
+base_layer_positions = []
+for i in range(2):
+    for j in range(2):
+        pos = (zone_pos[0] - base_width / 2 + i * block_size[0] + block_size[0] / 2, # plus half block size to get block center position
+               zone_pos[1] - base_depth / 2 + j * block_size[1] + block_size[1] / 2,
+               zone_pos[2] + height / 2)
+        base_layer_positions.append(pos)
+# Place the base layer blocks
+for block, pos in zip(blocks[0:4], base_layer_positions):
+    target_pose = (pos, zone_rot) # combine position and rotation to form a pose
+    put_first_on_second(block, target_pose)
+# Calculate the top layer position for the pyramid
+top_width = 1 * block_size[0]  # 1 block wide
+top_depth = 1 * block_size[1]   # 1 block deep
+# Calculate the position for the top layer (1 block)
+top_layer_positions = []
+for i in range(1):
+    for j in range(1):
+        pos = (zone_pos[0] - top_width / 2 + i * block_size[0] + block_size[0] / 2,
+               zone_pos[1] - top_depth / 2 + j * block_size[1] + block_size[1] / 2,
+               zone_pos[2] + height * 1.5)
+        top_layer_positions.append(pos)
+# Place the top layer block
+for block, pos in zip(blocks[4:5], top_layer_positions):
+    target_pose = (pos, zone_rot) # combine position and rotation to form a pose
+    put_first_on_second(block, target_pose)
+
+objects = ['fixed cyan zone', 'white block', 'purple zone']
+# clear all the objects that occupied the zone.
+say('clearing the objects occupying the zones')
+zone1 = parse_obj_name('fixed cyan zone, return result as one str', f'objects = {get_obj_names()}')
+zone2 = parse_obj_name('purple zone, return result as one str', f'objects = {get_obj_names()}')
+if type(zone1) == list:
+    zone1 = zone1[0]
+if type(zone2) == list:
+    zone2 = zone2[0]
+zones = [zone1,zone2]
+obj=[]
+for zone in zones:
+    objs = is_target_occupied(zone)
+    if objs:
+        for obj in objs:
+            put_first_on_second(obj,get_random_free_pos(targ=[zone1, zone2]))
+
+objects = ['cyan block 1', 'cyan block 2', 'cyan block 3', 'red block 1', 'red block 2', 'green line']
+# arrange one color of blocks that has the largest quantity evenly on and along the line.
+say('putting all blocks along the line evenly')
+blocks = parse_obj_name('one color of blocks that has the largest quantity, return result as list', f'objects = {get_obj_names()}')
+line = parse_obj_name('line, return result as one str', f'objects = {get_obj_names()}')
+if type(line) == list:
+    line = line[0]
+line_length = np.max(get_bbox(line))
+line_middle_pos = get_obj_pos(line)[0]
+line_rot = get_obj_rot(line)[0]
+targets = parse_position(f'{len(blocks)} evenly distributed points on a line which is positioned at {line_middle_pos} with orientation {line_rot} and length {line_length}')
+for targ in targets:
+    objs = is_target_occupied(targ)
+    if objs:
+        for obj in objs:
+            put_first_on_second(obj,get_random_free_pos(targ=targets))
+for block, pt in zip(blocks, targets):
+    put_first_on_second(block, pt)
+
+objects = ['fixed cyan zone', 'white block', 'purple zone', 'red block']
+# put two blocks on the bisector of the two zones with edge gap of the block size, and the distance between the blocks' edges is the size of the blocks, and let the line connecting the centers of zones also bisect the two blocks.
+say('clearing the objects occupying the zones')
+blocks = parse_obj_name('movable block, return result as list', f'objects = {get_obj_names()}')
+zones = parse_obj_name('zone, return result as one str', f'objects = {get_obj_names()}')
+zone1, zone2 = zones[:2]
+# query object size before action
+block_size = np.array(get_bbox(blocks))
+# gap between two blocks' edges is one block length, so gap between two block centers is two block length
+gap = 2 * block_size[0]
+zone1_center = get_obj_pos(zone1)[0]
+zone2_center = get_obj_pos(zone2)[0]
+positions = parse_position(f'{len(blocks)} evenly distributed points with gap {gap} on the perpendicular bisector of two fixed points {zone1_center} and {zone2_center}, while the line connecting the two fixed points also bisects these {len(blocks)} points.')
+targets = positions.copy()
+# check if the target is tuple of (position, rotation) or just position
+if not isinstance(targets[0][0],(list, tuple, np.ndarray)): 
+    targets = []
+    direct = [(zone2_center[0] - zone1_center[0]), (zone2_center[1] - zone1_center[1])]
+    normal = [-direct[1], direct[0]]
+    theta = np.arctan2(normal[1],normal[0])
+    rot = utils.eulerXYZ_to_quatXYZW((0,0,theta))
+    for pos in positions:
+        targets.append((pos,rot))
+for block, pt in zip(blocks, targets):
+    put_first_on_second(block, pt)
+
+# ---------------------------------------------------------------------------
+# Question
+# ---------------------------------------------------------------------------

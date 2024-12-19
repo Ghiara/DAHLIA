@@ -1,0 +1,212 @@
+import numpy as np
+from env_utils import get_obj_names, get_corner_name, get_side_name, get_bbox, parse_position, parse_obj_name
+from cliport.utils import utils
+import itertools
+
+# ---------------------------------------------------------------------------
+# Existing Method Explanations
+# ---------------------------------------------------------------------------
+'''
+get_obj_names(arg) -> str or [str] # return the full object name og arg in string type, return all abject names in a list when not inputting arg
+get_corner_name(pos) -> str # return the corner name of pos, in ['top left corner', 'top right corner', 'bottom left corner', 'botom right corner']
+get_side_name(pos) -> str # return the side name of pos, in ['top side', 'right side', 'bottom side', 'left side']
+get_bbox([obj] or obj) -> tuple # return the bounding box size of [obj][0] or obj in form of (size_x, size_y, size_z)
+utils.quatXYZW_to_eulerXYZ(rot) -> tuple # convert 4d quaternion orientation-vector to 3d euler angles
+utils.eulerXYZ_to_quatXYZW(rot) -> tuple # convert 3d euler angles orientation-vector to 4d quaternion
+parse_obj_name(query=str1, context=str2) -> list or str # usually return a list of str or just one str that is chosen out from str2 according to str1 which performs as description. Possible to demand for wanted return format in str1
+parse_position(query=arg) -> list or tuple # usually return one pose or several poses as a list based on description arg. Possible to demand for wanted return format in arg
+'''
+# ---------------------------------------------------------------------------
+# Orientations in Coordinate System
+# ---------------------------------------------------------------------------
+'''
+left: y-
+right: y+
+front: x+
+rear: x-
+top: z+
+bottom: z-
+top left: x-y-
+bottom left: x+y-
+top right: x-y+
+bottom right: x+y+
+'''
+# ---------------------------------------------------------------------------
+# General Requirements
+# ---------------------------------------------------------------------------
+'''
+You are judging whether the task is completed based on the given dict of objects and their poses in tuple (3d position, 3d euler angle), refer to the code style in examples below.
+You can use the existing APIs above, you must NOT import other packages.
+Our coordinate system is 3D cartesian system, but still pay attention to the orientations. This is usually important for your judge. 
+When you are not sure about objects or positions, you had better use parse_obj_name() and parse_position(), and clarify your return format demand.
+'''
+# ---------------------------------------------------------------------------
+# Task Examples
+# ---------------------------------------------------------------------------
+
+object_positions = {'red block with obj_id 0': [(0.4,0.3,0.02),(0,-3.1,1.57)],'blue block with obj_id 1': [(0.5,0.0004,0.02),(0,0,3.13)],'red zone with obj_id 2': [(0.5,0,0.01),(0,0,0)]}
+# the blue block in the red zone
+judge = False
+blue_block_size = get_bbox('blue block with obj_id 1')
+rx, ry, rz = (0,0,3.13)
+Rx = np.array([[1, 0, 0],
+                [0, np.cos(rx), -np.sin(rx)],
+                [0, np.sin(rx), np.cos(rx)]])
+Ry = np.array([[np.cos(ry), 0, np.sin(ry)],
+                [0, 1, 0],
+                [-np.sin(ry), 0, np.cos(ry)]])
+Rz = np.array([[np.cos(rz), -np.sin(rz), 0],
+                [np.sin(rz), np.cos(rz), 0],
+                [0, 0, 1]])
+R =  Rz @ Ry @ Rx
+normal_vector = R @ np.array([0, 0, 1])
+dominant_axis = np.argmax(np.abs(normal_vector))
+if dominant_axis == 0:
+    2d_blue_block_size = np.array([blue_block_size[1], blue_block_size[2]])
+elif dominant_axis == 1:
+    2d_blue_block_size = np.array([blue_block_size[0], blue_block_size[2]])
+else: 
+    2d_blue_block_size = np.array([blue_block_size[0], blue_block_size[1]])
+2d_zone_size = np.array(get_bbox('red zone with obj_id 2')[:2])
+2d_block_pos = np.array([0.5,0.0004])
+2d_zone_pos = np.array([0.5,0])
+if np.max(2d_blue_block_size) >= np.max(2d_zone_size[:2]):
+    if np.linalg.norm(2d_block_pos-2d_zone_pos) < np.max(2d_blue_block_size):
+        judge = True
+else:
+    block_left = 2d_block_pos[1] - 2d_blue_block_size[1] / 2
+    block_right = 2d_block_pos[1] + 2d_blue_block_size[1] / 2
+    block_bottom = 2d_block_pos[0] - 2d_blue_block_size[0] / 2
+    block_top = 2d_block_pos[0] + 2d_blue_block_size[0] / 2
+    zone_left = 2d_zone_pos[1] - 2d_zone_size[1] / 2
+    zone_right = 2d_zone_pos[1] + 2d_zone_size[1] / 2
+    zone_bottom = 2d_zone_pos[0] - 2d_zone_size[0] / 2
+    zone_top = 2d_zone_pos[0] + 2d_zone_size[0] / 2
+    if (block_left >= zone_left and 
+        block_right <= zone_right and
+        block_bottom >= zone_bottom and
+        block_top <= zone_top):
+        judge = True
+ret_val = judge
+
+object_positions = {'red block with obj_id 0': [(0.4,0.3,0.02),(0,-3.1,1.57)],'blue block with obj_id 1': [(0.5,0.0004,0.02),(0,0,3.13)]}
+# the blue block in the bottom right area
+judge = False
+blue_block_pos = (0.5,0.0004,0.02)
+x_min, y_min, x_max, y_max = parse_position('the 2d bounding box of the bottom right area, return result as list of [x_min, y_min, x_max, y_max]')
+if x_min < blue_block_pos[0] < x_max and y_min < blue_block_pos[1] < y_max:
+    judge = True
+ret_val = judge
+
+object_positions = {'red block with obj_id 0': [(0.4,0.3,0.02),(0,-3.1,1.57)],'blue block with obj_id 1': [(0.5,0.0004,0.02),(0,0,3.13)],'pink bowl with obj_id 2': [(0.5,0,0.04),(0,0,0)]}
+# all blocks in the bowl
+judge = False
+blocks = parse_obj_name('movable blocks, return result as list', f'objects = {get_obj_names()}')
+block_size = np.array(get_bbox(blocks))
+bowl_size = np.array(get_bbox('pink bowl with obj_id 2'))
+blocks_poses = [np.array(object_positions[block][0]) for block in blocks]
+bowl_pos = np.array([0.5,0,0.04])
+for block_pos in blocks_poses:
+    if np.linalg.norm(block_pos[:2]-bowl_pos[:2]) < np.max(block_size) and block_pos[2] > 0:
+        judge = True
+    else:
+        judge = False
+        break
+ret_val = judge
+
+object_positions = {'red block with obj_id 0': [(0.4,0.3,0.04),(0,0,0)], 'blue block with obj_id 1': [(0.4,0.3,0.02),(0,0,0)]}
+# the red block is on top of the blue block
+judge = False
+red_block_pos = np.array(object_positions['red block with obj_id 0'][0])
+blue_block_pos = np.array(object_positions['blue block with obj_id 1'][0])
+block_size = np.array(get_bbox('red block with obj_id 0'))
+if (abs(red_block_pos[0] - blue_block_pos[0]) < block_size[0] / 2 and
+    abs(red_block_pos[1] - blue_block_pos[1]) < block_size[1] / 2 and
+    red_block_pos[2] - blue_block_pos[2] < block_size[2] * 1.5 and
+    red_block_pos[2] > blue_block_pos[2]):
+    judge = True
+ret_val = judge
+
+object_positions = {'red block with obj_id 0': [(0.4,0.3,0.04),(0,0,0)], 'blue block with obj_id 1': [(0.4,0.3,0.06),(0,0,0)], 'pink bowl with obj_id 2': [(0.4,0.3,0.02),(0,0,0)]}
+# the pink bowl contains exactly 2 blocks
+judge = False
+bowl_pos = np.array(object_positions['pink bowl with obj_id 2'][0])
+bowl_size = np.array(get_bbox('pink bowl with obj_id 2'))
+blocks = parse_obj_name('movable blocks, return result as list', f'objects = {get_obj_names()}')
+block_count = 0
+for block in blocks:
+    block_pos = np.array(object_positions[block][0])
+    block_size = np.array(get_bbox(block))
+    if (abs(block_pos[0] - bowl_pos[0]) < bowl_size[0] / 2 and
+        abs(block_pos[1] - bowl_pos[1]) < bowl_size[1] / 2 and
+        block_pos[2] > bowl_pos[2]):
+        block_count += 1
+    if block_count > 2:
+        break
+if block_count == 2:
+    judge = True
+ret_val = judge
+
+object_positions = {'red block with obj_id 0': [(0.2,0.4,0.02),(0,0,0)], 'blue block with obj_id 1': [(0.4,0.4,0.02),(0,0,0)], 'yellow block with obj_id 2': [(0.6,0.4,0.02),(0,0,0)], 'green line with obj_id 3': [(0.4,0.4,0.01),(0,0,0)]}
+# all blocks are evenly spaced along the whole green line with orientations also aligned with the line
+judge = True
+line_pos = np.array(object_positions['green line with obj_id 3'][0])
+line_length = np.max(get_bbox('green line with obj_id 3'))
+blocks = parse_obj_name('movable blocks', f'objects = {get_obj_names()}')
+expected_positions = np.linspace(line_pos[0] - line_length / 2, line_pos[0] + line_length / 2, len(blocks))
+for block, expected_pos in zip(blocks, expected_positions):
+    if abs(object_positions[block][1][2]-line_pos[1][2])%(np.pi/2) > 0.01:
+        judge = False
+        break 
+    block_pos = np.array(object_positions[block][0])
+    if abs(block_pos[0] - expected_pos) > 0.01:
+        judge = False
+        break
+ret_val = judge
+
+object_positions = {
+    'cyan block': [(0.2, 0.3, 0.02), (0, 0, 0)],
+    'white block': [(0.4, 0.4, 0.02), (0, 0, 0)],
+    'purple zone': [(0.5, 0.5, 0.02), (0, 0, 0)],
+    'blue block': [(0.6, 0.6, 0.02), (0, 0, 0)],
+    'red block': [(0.7, 0.7, 0.02), (0, 0, 0)],
+    'silver block': [(0.8, 0.8, 0.02), (0, 0, 0)]
+}
+# the blocks form the largest circle in the zone
+judge = False
+blocks = parse_obj_name('the movable blocks', f'objects = {get_obj_names()}')
+zone = parse_obj_name('zone', f'objects = {get_obj_names()}')
+zone_pos = np.array(object_positions[zone][0])
+zone_size = np.array(get_bbox(zone))
+radius = np.min(zone_size[:2]) / 2
+block_positions = [np.array(object_positions[block][0]) for block in blocks]
+distances = [np.linalg.norm(block_pos[:2] - zone_pos[:2]) for block_pos in block_positions]
+if all(np.isclose(distance, radius, atol=0.01) for distance in distances):
+    judge = True
+ret_val = judge
+
+object_positions = {
+    'movable red block with obj_id 0': [(0.4, 0.4, 0.02), (0, 0, 0)],
+    'movable red block with obj_id 1': [(0.4, 0.5, 0.02), (0, 0, 0)],
+    'fixed red block with obj_id 2': [(0.3, 0.3, 0.02), (0, 0, 0)],
+    'movable red block with obj_id 3': [(0.5, 0.5, 0.02), (0, 0, 0)],
+    'blue zone with obj_id 4': [(0.5, 0.5, 0.02), (0, 0, 0)],
+    'movable red block with obj_id 5': [(0.5, 0.4, 0.02), (0, 0, 0)],
+    'movable red block with obj_id 7': [(0.4, 0.4, 0.04), (0, 0, 0)],
+    'movable red block with obj_id 8': [(0.5, 0.5, 0.04), (0, 0, 0)],
+    'red zone with obj_id 6': [(0.5, 0.5, 0.02), (0, 0, 0)]
+}
+# the red blocks form a 2*2*2 cube in the center of the zone
+judge = False
+red_blocks = parse_obj_name('movable objects that can form a 2*2*2 red cube', f'objects = {get_obj_names()}')
+zone_pos = np.array(object_positions['red zone with obj_id 6'][0])
+zone_orientation = np.array(object_positions['red zone with obj_id 6'][1])
+block_size = np.array(get_bbox(red_blocks))
+cube_center = np.array(zone_pos) + [0, 0, block_size[2]]
+half_diagonal = 1.5 * np.linalg.norm(block_size / 2)
+target_positions = parse_position(f'eight corners around the center {cube_center} in x-y-z space with distance of {0.8 * half_diagonal} and quaternion orientation of {zone_orientation}, return result as list of eight 3d positions')
+block_positions = [np.array(object_positions[block][0]) for block in red_blocks]
+for perm in itertools.permutations(block_positions):
+    if all(np.allclose(a, e, atol=0.01) for a, e in zip(perm, target_positions)):
+        judge = True
+ret_val = judge

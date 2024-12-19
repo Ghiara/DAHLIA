@@ -1,0 +1,211 @@
+import numpy as np
+from shapely.geometry import *
+from shapely.affinity import *
+from env_utils import denormalize_xy, denormalize_bbox, parse_obj_name, get_obj_names, get_obj_pos, get_obj_rot
+from cliport.utils import utils
+
+# ---------------------------------------------------------------------------
+# Existing Method Explanations
+# ---------------------------------------------------------------------------
+'''
+denormalize_xy(2d_pos, size=None) -> list # convert the normalized 2d_pos within [0,1] in a common cartesian coordinate to a denormalized 2d position of given area size (when None then size of desktop)
+denormalize_bbox(bbox=[x_min, y_min, x_max, y_max]) -> list # specially designed for converting the normalized bounding box into current coordinate
+get_obj_pos(obj) -> [list] # return a list of len(obj) of 3d position-vectors of obj, even when obj is just one object not a list of objects
+get_obj_rot(obj) -> [list] # return a list of len(obj) of 4d quaternion orientation-vectors of obj, even when obj is just one object not a list of objects
+get_obj_names(arg) -> str or [str] # return the full object name og arg in string type, return all abject names in a list when not inputting arg
+utils.quatXYZW_to_eulerXYZ(rot) -> tuple # convert 4d quaternion orientation-vector to 3d euler angles
+utils.eulerXYZ_to_quatXYZW(rot) -> tuple # convert 3d euler angles orientation-vector to 4d quaternion
+'''
+# ---------------------------------------------------------------------------
+# Orientations in Coordinate System
+# ---------------------------------------------------------------------------
+'''
+left: y-
+right: y+
+front: x+
+rear: x-
+top: z+
+bottom: z-
+top left: x-y-
+bottom left: x+y-
+top right: x-y+
+bottom right: x+y+
+'''
+# ---------------------------------------------------------------------------
+# General Requirements
+# ---------------------------------------------------------------------------
+'''
+You are writing python code for position parsing, refer to the code style in examples below.
+You can use the existing APIs above, you must NOT import other packages.
+Our coordinate system is 3D cartesian system, but still pay attention to the orientations. 
+Also pay attention to the return format requirements in descriptions for some tasks.
+'''
+# ---------------------------------------------------------------------------
+# Task Examples
+# ---------------------------------------------------------------------------
+
+# a 0.3 unit horizontal line in the middle with 3 points.
+middle_pos = transform_coordinate(denormalize_xy([0.5, 0.5])) 
+start_pos = middle_pos + [0, -0.3/2]
+end_pos = middle_pos + [0, 0.3/2]
+line = make_line(start=start_pos, end=end_pos)
+points = interpolate_pts_on_line(line=line, n=3)
+ret_val = points
+
+# a 0.2 unit vertical line near the right with 4 points.
+middle_pos = denormalize_xy([0.9, 0.5]) 
+start_pos = middle_pos + [-0.2/2, 0]
+end_pos = middle_pos + [0.2/2, 0]
+line = make_line(start=start_pos, end=end_pos)
+points = interpolate_pts_on_line(line=line, n=4)
+ret_val = points
+
+# a diagonal line from the top left to the bottom right corner with 5 points.
+top_left_corner = denormalize_xy([0, 1])
+bottom_right_corner = denormalize_xy([1, 0])
+line = make_line(start=top_left_corner, end=bottom_right_corner)
+points = interpolate_pts_on_line(line=line, n=5)
+ret_val = points
+
+# a triangle with size 10cm with 3 points.
+polygon = make_triangle(size=0.1, center=denormalize_xy([0.5, 0.5]))
+points = get_points_from_polygon(polygon)
+ret_val = points
+
+# the corner closest to the sun colored block.
+block_name = parse_obj_name('the sun colored block', f'objects = {get_obj_names()}')
+corner_positions = np.array([denormalize_xy(pos) for pos in [[0, 0], [0, 1], [1, 1], [1, 0]]])
+closest_corner_pos = get_closest_point(points=corner_positions, point=get_obj_pos(block_name))
+ret_val = closest_corner_pos
+
+# the side farthest from the right most bowl.
+bowl_name = parse_obj_name('the right most bowl', f'objects = {get_obj_names()}')
+side_positions = np.array([denormalize_xy(pos) for pos in [[0.5, 0], [0.5, 1], [1, 0.5], [0, 0.5]]])
+farthest_side_pos = get_farthest_point(points=side_positions, point=get_obj_pos(bowl_name))
+ret_val = farthest_side_pos
+
+# a point behind the third block from the front by 0.1 unit.
+block_name = parse_obj_name('the third block from the front', f'objects = {get_obj_names()}')
+ret_val = get_obj_pos(block_name) + [-0.1, 0]
+
+# a point 0.1 unit left of the bowls.
+bowl_names = parse_obj_name('the bowls', f'objects = {get_obj_names()}')
+bowl_positions = get_all_object_positions_np(obj_names=bowl_names)
+left_obj_pos = bowl_positions[np.argmin(bowl_positions[0, :])] + [0, -0.1]
+ret_val = left_obj_pos
+
+# the bottom side.
+bottom_pos = denormalize_xy([0.5, 0])
+ret_val = bottom_pos
+
+# the top corners, return result as list of [top_left_pos, top_right_pos]
+top_left_pos = denormalize_xy([0, 1])
+top_right_pos = denormalize_xy([1, 1])
+ret_val = [top_left_pos, top_right_pos]
+
+# the 2-D bounding box of top right area, return result as tuple of (x_min, y_min, x_max, y_max)
+x_min, y_min, x_max, y_max = denormalize_bbox([0.5, 0.5, 1, 1])
+ret_val = (x_min, y_min, x_max, y_max)
+
+# the 2-D bounding box of bottom right area, return result as list of [x_min, y_min, x_max, y_max]
+x_min, y_min, x_max, y_max = denormalize_bbox([0.5, 0, 1, 0.5])
+ret_val = [x_min, y_min, x_max, y_max]
+
+objects = ['blue block', 'blue block', 'blue block', 'fixed blue block', 'purple block']
+# get poses as positions and orientations grouped in a tuple of all blue blocks.
+pos = get_obj_pos('blue block', -1)
+rot = get_obj_rot('blue block', -1)
+ret_val = [(pos[i], rot[i]) for i in range len(pos)]
+
+objects = ['blue block', 'fixed blue block', 'blue block', 'fixed blue block', 'purple block']
+# get poses of the first 2 blue blocks.
+pos = get_obj_pos('blue block', 2)
+rot = get_obj_rot('blue block', 2)
+ret_val = [(pos[i], rot[i]) for i in range len(pos)]
+
+# four points that can form a square in a rectangular zone with zone position ((0.1,0.2,0.01),(0,0,0,1)) and zone size (0.2, 0.1, 0.01), return result as list of [top_left, top_right, bottom_left, bottom_right]
+zone_pos = np.array([0.1,0.2,0.01])
+zone_rot = np.array([0,0,0,1])
+zone_size = np.array([0.2,0.1,0.01])
+relative_top_left = denormalize_xy([0,1],zone_size/2)
+relative_top_right = denormalize_xy([1,1],zone_size/2)
+relative_bottom_left = denormalize_xy([0,0],zone_size/2)
+relative_bottom_right = denormalize_xy([1,0],zone_size/2)
+top_left = ((np.concatenate([relative_top_left, [0]]) + zone_pos),zone_rot)
+top_right = ((np.concatenate([relative_top_right, [0]]) + zone_pos),zone_rot)
+bottom_left = ((np.concatenate([relative_bottom_left, [0]]) + zone_pos),zone_rot)
+bottom_right = ((np.concatenate([relative_bottom_right, [0]]) + zone_pos),zone_rot)
+ret_val = [top_left, top_right, bottom_left, bottom_right]
+
+# eight corners around the center (0.1,0.2,0.1) in x-y-z space with distance of 0.5 and quaternion orientation of (1,0,1,0), return result as a list of tuple(pos, rot)
+center = np.array([0.1,0.2,0.1])
+dist = 0.5
+rotation = np.array[1,0,1,0]
+half_length = np.sqrt(0.5**2/3)
+offsets = np.array([[-half_length,-half_length,-half_length],[half_length,-half_length,-half_length],[half_length,half_length,-half_length],
+                    [-half_length,half_length,-half_length],[-half_length,-half_length,half_length], [-half_length,half_length,half_length],
+                    [half_length,-half_length,half_length],[half_length,half_length,half_length]])
+position = center + offsets
+pos_rot = []
+for pos in position:
+    pos_rot.append((pos,rotation))
+ret_val = pos_rot
+
+# 5 points that form a circle with radius 0.2 around the center (0.3,0.2,0.1), return result as list of tuple(pos, rot)
+radius = 0.2
+center = np.array([0.3, 0.2, 0.1])
+angles = np.linspace(0, 2 * np.pi, 5, endpoint=False)
+initial_angle = np.random.uniform(0, 2*np.pi)
+pt_poses = []
+for angle in angles:
+    pos = [center[0] + radius * np.cos(angle + initial_angle), center[1] + radius * np.sin(angle + initial_angle), center[2]]
+    rot = utils.eulerXYZ_to_quatXYZW((0,0,angle + initial_angle))
+    pt_poses.append((pos,rot))
+ret_val = pt_poses
+
+# 5 averagely distributed points that form a line which centered at (3,1,1) with length 10 and quaternion orientation (0,0,0,1)
+rot = (0,0,0,1)
+center = np.array([3,1,1])
+P_local = np.array([
+    [-5, 0, 0],
+    [-2.5, 0, 0],
+    [0, 0, 0],
+    [2.5, 0, 0],
+    [5, 0, 0]
+])
+x,y,z,w = rot
+R = np.array([
+    [1 - 2*y**2 - 2*z**2, 2*x*y - 2*z*w, 2*x*z + 2*y*w],
+    [2*x*y + 2*z*w, 1 - 2*x**2 - 2*z**2, 2*y*z - 2*x*w],
+    [2*x*z - 2*y*w, 2*y*z + 2*x*w, 1 - 2*x**2 - 2*y**2]
+])
+P_world = np.dot(R, P_local.T).T
+P_final = P_world + center
+P_final = [(p,rot) for p in P_final]
+ret_val = P_final
+
+# 8 evenly distributed points with gap 1 on the bisector line between two symmetric horizontal zones each with center (0,0,0) and (1,3,0), while the line connecting the center of the zones also bisects these points.
+n = 8
+gap = 1
+A = np.array([0,0,0])
+B = np.array([1,3,0])
+mid_point = [(A[0] + B[0]) / 2, (A[1] + B[1]) / 2]
+direction_vector = [(B[0] - A[0]), (B[1] - A[1])]
+length = np.linalg.norm(direction_vector)
+unit_direction = [direction_vector[0] / length, direction_vector[1] / length]
+normal_vector = [-unit_direction[1], unit_direction[0]]
+block_positions = []
+offset = (n//2-1+0.5+n%2*0.5)*gap
+ini_position = np.array([mid_point[0] + offset * normal_vector[0], mid_point[1] + offset * normal_vector[1]])
+positions.append(ini_position)
+for i in range(n-1):   
+    position = positions[i] + np.array([-gap * normal_vector[0], -gap * normal_vector[1]])
+    positions.append(position)
+theta = np.arctan2(normal_vector[1],normal_vector[0])
+rot = utils.eulerXYZ_to_quatXYZW((0,0,thete))
+positions = [np.concatenate((pos, rot)) for pos in positions]
+ret_val = positions
+
+# ---------------------------------------------------------------------------
+# Question
+# ---------------------------------------------------------------------------

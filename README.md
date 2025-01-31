@@ -1,5 +1,29 @@
 # DAHLIA
-Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Conditioned Closed-Loop Feedback"
+
+Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedback"
+
+### [[Project Website]](https://ghiara.github.io/DAHLIA/) 
+
+[Yuan Meng](https://github.com/Ghiara)<sup>1,</sup>, 
+[Xiangtong Yao](https://www.ce.cit.tum.de/air/people/xiangtong-yao/)<sup>1</sup>, 
+[Haihui Ye]()<sup>1</sup>,
+[Shengqiang Zhang]()<sup>2</sup>,
+[Achim Lilienthal](https://kifabrik.mirmi.tum.de/team/)<sup>1</sup>,
+[Zhenshan Bing](https://github.com/zhenshan-bing)<sup>3,4</sup>, 
+[Alois Knoll](https://www.ce.cit.tum.de/air/people/prof-dr-ing-habil-alois-knoll/)<sup>1</sup>,
+
+<sup>1</sup>The School of Computation, Information and Technology, Technical University of Munich, Germany
+
+<sup>2</sup>Center for Information and Language Processing, Ludwig Maximilian University of Munich, Germany
+
+<sup>3</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China
+
+<small><sup>4</sup>Corresponding author: zhenshan.bing@tum.de</small>
+
+
+
+
+
 
 
 
@@ -114,7 +138,93 @@ The prompting of Task generation can visit at `/prompts/bottomup_task_generation
 
 The prompting of DAHLIA role definition can visit at `/prompts/dahlia/*`
 
+As described in the paper, the prompting of each LMP planner contains basically following parts:
 
+1. The libraries import, including our predefined APIs and widely used third party libraries(e.g., numpy), for example:
+```python
+
+import numpy as np
+from env_utils import get_obj_pos, get_obj_rot, parse_position
+from utils import get_obj_positions_np, get_obj_rotations_np
+from cliport.utils import utils
+```
+
+2. Methods explanation, which briefly introduce how our customized APIs can be used, for example:
+```python
+
+# ---------------------------------------------------------------------------
+# Existing Method Explanations
+# ---------------------------------------------------------------------------
+'''
+get_obj_pos(obj) -> [list] # return a list of len(obj) of 3d position-vectors of obj, even when obj is just one object not a list of objects
+get_obj_rot(obj) -> [list] # return a list of len(obj) of 4d quaternion orientation-vectors of obj, even when obj is just one object not a list of objects
+get_obj_positions_np([obj]) -> [list] # return a list of len([obj]) of 3d position-vectors of obj in [obj]
+...etc.
+'''
+
+```
+
+3. Third part define how our Coordinate system defined related to the robot view, for example:
+```python
+
+# ---------------------------------------------------------------------------
+# Orientations in Coordinate System
+# ---------------------------------------------------------------------------
+'''
+left: y-
+right: y+
+front: x+
+rear: x-
+top: z+
+bottom: z-
+top left: x-y-
+bottom left: x+y-
+top right: x-y+
+bottom right: x+y+
+'''
+```
+
+4. This part define the general role how the LLM agent can act and response with each other, for example:
+```python
+
+# ---------------------------------------------------------------------------
+# General Requirements
+# ---------------------------------------------------------------------------
+'''
+You are writing python code for object parsing, refer to the code style in examples below.
+You can use the existing APIs above, you must NOT import other packages.
+Our coordinate system is 3D cartesian system, but still pay attention to the orientations. 
+Also pay attention to the return format requirements in descriptions for some tasks.
+When you are not sure about positions, you had better use parse_position(), and clarify your return format demand.
+'''
+```
+
+5. We may introduce task plan examples to help agent adapt the task planning in a few-shot manner, the code for example:
+```python
+
+# ---------------------------------------------------------------------------
+# Task Examples
+# ---------------------------------------------------------------------------
+
+objects = ['blue block', 'cyan block', 'purple bowl', 'gray bowl', 'brown bowl', 'pink block', 'purple block']
+# the block closest to the purple bowl.
+block_names = ['blue block', 'cyan block', 'purple block']
+block_positions = get_obj_positions_np(block_names)
+closest_block_idx = get_closest_idx(points=block_positions, point=get_obj_pos('purple bowl')[0])
+closest_block_name = block_names[closest_block_idx]
+ret_val = closest_block_name
+
+objects = ['brown bowl', 'banana with obj_id 1', 'brown block with obj_id 9', 'apple', 'blue bowl with obj_id 8', 'blue block with obj_id 3']
+# the block, return result as list.
+ret_val = ['brown block with obj_id 9', 'blue block with obj_id 3']
+
+objects = ['brown bowl', 'banana with obj_id 1', 'brown block with obj_id 9', 'apple', 'blue bowl with obj_id 8', 'blue block with obj_id 3']
+# the block color, return result as tuple.
+ret_val = ('brown', 'blue')
+...
+```
+
+Based on above mention promptings, we can help the agent to build a systematical planning mechanism based on the idea of chain-of-thought.
 
 ----------------------------------------------------------------------------
 

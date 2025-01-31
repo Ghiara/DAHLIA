@@ -27,7 +27,7 @@ Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulatio
 
 
 
-## Installation
+## 1. Installation
 
 ### Cloning
 Go to the GitHub repository website and select 'Code' to get an HTTPS or SSH link to the repository.
@@ -67,7 +67,7 @@ python setup.py develop
 
 ----------------------------------------------------------------------------
 
-## Run code
+## 2. Run code
 
 ### Generate Task File
 Generate more new tasks if needed.
@@ -132,7 +132,7 @@ python cliport/dahlia_run.py task=[task name] mode=test check=False n=1
 
 
 
-## Prompting
+## 3. Prompting
 
 The prompting of Task generation can visit at `/prompts/bottomup_task_generation_prompt_new/*` or `/prompts/topdown_task_generation_prompt/*`.
 
@@ -228,7 +228,7 @@ Based on above mention promptings, we can help the agent to build a systematical
 
 ----------------------------------------------------------------------------
 
-## Acknowledgements
+## 4. Acknowledgements
 
 This project uses code or idea from open-source projects and datasets including:
 

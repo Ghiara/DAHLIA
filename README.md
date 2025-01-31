@@ -1,5 +1,5 @@
 # DAHLIA
-Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulation with Language-Conditioned Closed-Loop Feedback"
+Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Conditioned Closed-Loop Feedback"
 
 
 
@@ -103,8 +103,18 @@ Randomly pick *n* episodes form test dataset and execute and evaluate,
 finally show success rate.
 
 ```bash
-python cliport/cap.py task=[task name] mode=test check=False n=1
+python cliport/dahlia_run.py task=[task name] mode=test check=False n=1
 ```
+
+
+
+## Prompting
+
+The prompting of Task generation can visit at `/prompts/bottomup_task_generation_prompt_new/*` or `/prompts/topdown_task_generation_prompt/*`.
+
+The prompting of DAHLIA role definition can visit at `/prompts/dahlia/*`
+
+
 
 ----------------------------------------------------------------------------
 

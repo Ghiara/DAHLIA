@@ -41,7 +41,18 @@ from cliport.utils import utils
 # )
 
 
+###############################################################
+############### Implementation of DAHLIA ######################
+###############################################################
+
+# Prompts can visit at `/prompts/dahlia/***.txt`
+
+
 class LMP:
+    '''
+    LMP planners tunnel
+    '''
+    
     def __init__(self, name, cfg, lmp_fgen, fixed_vars, variable_vars,
                  offline_model=None, offline_tokenizer=None, use_vllm: bool = False):
         self._name = name
@@ -239,8 +250,15 @@ class LMP:
                 return to_exec
             else:
                 return lvars[self._cfg['return_val_name']]
+
+
+
+
         
 class LMPV:
+    '''
+    Vision-based LMP reporter
+    '''
     def __init__(self, name, cfg):
         self._name = name
         self._cfg = cfg[0]
@@ -378,6 +396,9 @@ class LMPV:
 
 
 class LMPFGen:
+    '''
+    LMP-Feedback-Generator: the reporter tunnel of dahlia framework
+    '''
 
     def __init__(
             self,
@@ -1210,6 +1231,11 @@ def check_obj():
 
 def setup_LMP(env, cfg_tabletop, llm='gpt4',
               offline_model=None, offline_tokenizer=None, use_vllm=False):
+    """
+    Use the same LLM model for both LMP and LMPFGen.
+    If using different LLMs for them,
+    two offline loaded models should be passed to the function setup_LMP.
+    """
     # LMP env wrapper
     cfg_tabletop = copy.deepcopy(cfg_tabletop)
     cfg_tabletop['env'] = dict()
@@ -1887,7 +1913,7 @@ mem = (0, [0], 32)
 cfg_tabletop = {
     'lmps': {
         'tabletop_ui': {
-            'prompt_text': open(f"prompts/capravens/prompt_tabletop_ui.txt").read(),
+            'prompt_text': open(f"prompts/dahlia/prompt_tabletop_ui.txt").read(),
             'engine': update_model,
             'max_tokens': update_max_token,
             'temperature': 0,
@@ -1901,7 +1927,7 @@ cfg_tabletop = {
             'return_val_name': 'whole_answer',
         },
         'parse_obj_name': {
-            'prompt_text': open(f"prompts/capravens/prompt_parse_obj_name.txt").read(),
+            'prompt_text': open(f"prompts/dahlia/prompt_parse_obj_name.txt").read(),
             'engine': update_model,
             'max_tokens': update_max_token,
             'temperature': 0,
@@ -1915,7 +1941,7 @@ cfg_tabletop = {
             'return_val_name': 'ret_val',
         },
         'parse_position': {
-            'prompt_text': open(f"prompts/capravens/prompt_parse_position.txt").read(),
+            'prompt_text': open(f"prompts/dahlia/prompt_parse_position.txt").read(),
             'engine': update_model,
             'max_tokens': update_max_token,
             'temperature': 0,
@@ -1929,7 +1955,7 @@ cfg_tabletop = {
             'return_val_name': 'ret_val',
         },
         'parse_question': {
-            'prompt_text': open(f"prompts/capravens/prompt_parse_question.txt").read(),
+            'prompt_text': open(f"prompts/dahlia/prompt_parse_question.txt").read(),
             'engine': update_model,
             'max_tokens': update_max_token,
             'temperature': 0,
@@ -1943,7 +1969,7 @@ cfg_tabletop = {
             'return_val_name': 'ret_val',
         },
         'transform_shape_pts': {
-            'prompt_text': open(f"prompts/capravens/prompt_transform_shape_pts.txt").read(),
+            'prompt_text': open(f"prompts/dahlia/prompt_transform_shape_pts.txt").read(),
             'engine': update_model,
             'max_tokens': update_max_token,
             'temperature': 0,
@@ -1957,7 +1983,7 @@ cfg_tabletop = {
             'return_val_name': 'new_shape_pts',
         },
         'fgen': {
-            'prompt_text': open(f"prompts/capravens/prompt_fgen.txt").read(),
+            'prompt_text': open(f"prompts/dahlia/prompt_fgen.txt").read(),
             'engine': update_model,
             'max_tokens': update_max_token,
             'temperature': 0,
@@ -1969,7 +1995,7 @@ cfg_tabletop = {
             'include_context': True,
         },
         'parse_completion': {
-            'prompt_text': open(f"prompts/capravens/prompt_parse_completion.txt").read(),
+            'prompt_text': open(f"prompts/dahlia/prompt_parse_completion.txt").read(),
             'engine': update_model,
             'max_tokens': update_max_token,
             'temperature': 0,

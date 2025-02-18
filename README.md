@@ -1,31 +1,38 @@
 # DAHLIA
 
+<div align="center">
 Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedback"
 
 ### [[Project Website]](https://ghiara.github.io/DAHLIA/) 
 
-[Yuan Meng](https://github.com/Ghiara)<sup>1,</sup>, 
-[Xiangtong Yao](https://www.ce.cit.tum.de/air/people/xiangtong-yao/)<sup>1</sup>, 
-[Haihui Ye]()<sup>1</sup>,
-[Yirui Zhou]()<sup>1</sup>,
-[Shengqiang Zhang]()<sup>2</sup>,
-[Achim Lilienthal](https://kifabrik.mirmi.tum.de/team/)<sup>1</sup>,
-[Zhenshan Bing](https://github.com/zhenshan-bing)<sup>3,4</sup>, 
-[Alois Knoll](https://www.ce.cit.tum.de/air/people/prof-dr-ing-habil-alois-knoll/)<sup>1</sup>,
+[Yuan Meng](https://github.com/Ghiara)<sup>1,</sup>, [Xiangtong Yao](https://www.ce.cit.tum.de/air/people/xiangtong-yao/)<sup>1</sup>, [Haihui Ye]()<sup>1</sup>, [Yirui Zhou]()<sup>1</sup>, [Shengqiang Zhang]()<sup>2</sup>,
 
-<sup>1</sup>The School of Computation, Information and Technology, Technical University of Munich, Germany
+[Zhenshan Bing](https://github.com/zhenshan-bing)<sup>3,&dagger;</sup>, [Alois Knoll](https://www.ce.cit.tum.de/air/people/prof-dr-ing-habil-alois-knoll/)<sup>1</sup>,
+</div>
 
-<sup>2</sup>Center for Information and Language Processing, Ludwig Maximilian University of Munich, Germany
-
-<sup>3</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China
-
-<small><sup>4</sup>Corresponding author: zhenshan.bing@tum.de</small>
+<p align="center">
+<small><sup>1</sup>The School of Computation, Information and Technology, Technical University of Munich, Germany</small>
+<br><small><sup>2</sup>Center for Information and Language Processing, Ludwig Maximilian University of Munich, Germany</small>
+<br><small><sup>3</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China</small>
+<br><small><sup>&dagger;</sup>Corresponding author: zhenshan.bing@tum.de</small>
+</p>
 
 
+## Abstract
 
+Recent advances in language-conditioned robotic manipulation have leveraged imitation and reinforcement learning 
+to enable robots to execute tasks from human commands. However, these approaches often suffer from limited generalization, 
+adaptability, and the scarcity of large-scale specialized datasets—unlike data-rich fields such as computer vision—leading 
+to challenges in handling complex long-horizon tasks.
+In this work, We introduce DAHLIA, a data-agnostic framework for language-conditioned long-horizon robotic manipulation 
+that leverages large language models (LLMs) for real-time task planning and execution.
+Our framework features a dual-tunnel architecture, where a planner LLM decomposes tasks and generates executable plans, 
+while a reporter LLM provides closed-loop feedback, ensuring adaptive re-planning and robust execution.
+Additionally, we incorporate temporal abstraction and chain-of-thought (CoT) reasoning to enhance inference efficiency 
+and traceability. DAHLIA achieves superior generalization and adaptability across diverse, unstructured environments, 
+demonstrating state-of-the-art performance in both simulated and real-world long-horizon tasks.
 
-
-
+![framework](/docs/static/images/framework.jpg "Framework of DAHLIA")
 
 
 ## 1. Installation

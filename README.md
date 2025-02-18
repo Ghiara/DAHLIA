@@ -7,6 +7,7 @@ Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulatio
 [Yuan Meng](https://github.com/Ghiara)<sup>1,</sup>, 
 [Xiangtong Yao](https://www.ce.cit.tum.de/air/people/xiangtong-yao/)<sup>1</sup>, 
 [Haihui Ye]()<sup>1</sup>,
+[Yirui Zhou]()<sup>1</sup>,
 [Shengqiang Zhang]()<sup>2</sup>,
 [Achim Lilienthal](https://kifabrik.mirmi.tum.de/team/)<sup>1</sup>,
 [Zhenshan Bing](https://github.com/zhenshan-bing)<sup>3,4</sup>, 
@@ -29,7 +30,7 @@ Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulatio
 
 ## 1. Installation
 
-### Cloning
+### 1.1 Cloning
 Go to the GitHub repository website and select 'Code' to get an HTTPS or SSH link to the repository.
 Clone the repository to your device, e.g.
 ```bash
@@ -37,7 +38,7 @@ git clone https://github.com/Ghiara/DAHLIA
 ```
 Enter the root directory of this project on your device. The root directory contains this README-file.
 
-### Environment
+### 1.2 Build Environment
 
 We recommend to manage the python environment with **conda** and suggest [Miniconda](https://docs.conda.io/en/latest/miniconda.html) as a light-weight installation.
 
@@ -55,7 +56,7 @@ Activate the new environment by running (Make sure that no other environment was
 conda activate dahlia
 ```
 
-### Install Other Packages
+### 1.3 Install Other Packages (option)
 **NOTE:** DAHLIA principly does not need training. Install Pytorch in case you want to 
 fine-tune the LLM or use CLIPort. 
 ```bash
@@ -69,7 +70,7 @@ python setup.py develop
 
 ## 2. Run code
 
-### Generate Task File
+### 2.1 Generate Task File (option)
 Generate more new tasks if needed.
 
 **reference number** determines the number of existing task candidates being
@@ -102,7 +103,7 @@ python gensim/run_simulation.py \
     use_template=True target_task_name=[task name] \ 
     target_task_description=[task instruction] 
 ```
-### Execute a Task
+### 2.2 Execute a Task
 To directly try to complete a task (based on existing task file).
 
 Fill in **task name** to locate the task file.
@@ -111,7 +112,7 @@ Fill in **task name** to locate the task file.
 python cliport/cap.py task=[task name] mode=cap check=False
 ```
 
-### Generate Test Task Dataset
+### 2.3 Generate Test Task Dataset
 DAHLIA uses the same dataset style of CLIPort.
 
 Fill in **number of samples** to set number of episodes one task dataset should have.
@@ -122,7 +123,7 @@ python cliport/demo.py n=[number of samples] \
 ```
 This will save the test dataset in the folder data.
 
-### Test the Execution
+### 2.4 Test the Execution
 Randomly pick *n* episodes form test dataset and execute and evaluate, 
 finally show success rate.
 

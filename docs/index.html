@@ -65,6 +65,7 @@
                 <a target="_blank">Yirui Zhou</a><sup>1</sup>,</span>
               <span class="author-block">
                 <a target="_blank">Shengqiang Zhang</a><sup>2</sup>,</span>
+              <br>
               <span class="author-block">
                 <a target="_blank">Zhenshan Bing</a><sup>3,&dagger;</sup>,</span>
               <span class="author-block">
@@ -86,7 +87,7 @@
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="https://github.com/Ghiara/DAHLIA" target="_blank"
+                        <a href="./static/dahlia_paper.pdf" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -129,6 +130,75 @@
     </div>
   </div>
 </section>
+
+<!-- Teaser video 1-->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video poster="" id="tree" autoplay controls muted loop height="100%">
+        <!-- Your video here -->
+        <!-- <source src="static/videos/banner_video.mp4" type="video/mp4"> -->
+        <source src="static/videos/DAHLIA-movie.mp4" type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-justified">
+        <b>Simulation and real-world demonstrations of DAHLIA framework in solving long-horizon tasks</b>. 
+            This study introduces DAHLIA, an efficient framework for embodied long-horizon manipulation, 
+            leveraging LLMs to directly interpret high-level language instructions and dynamically generate 
+            actionable motion primitives. The framework employs a planner-reporter dual-tunnel architecture, 
+            forming a closed-loop feedback system that enables self-checking, significantly improving robustness 
+            and success rates. By integrating temporal abstraction in action execution and chain-of-thought 
+            reasoning in task planning, DAHLIA demonstrates strong generalization across diverse long-horizon 
+            manipulation tasks, achieving high success rates in both seen and unseen scenarios.
+      </h2>
+    </div>
+  </div>
+</section>
+<!-- End teaser video 1-->
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item item-pyramid">
+          <video poster="" id="steve" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/task1.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-cube">
+          <video poster="" id="chair-tp" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/task2.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-circle">
+          <video poster="" id="shiba" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/task3.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      
+      <h2 class="subtitle has-text-justified">
+        <b>Video demonstrations of DAHLIA in solving real-world long-horizon tasks</b>. 
+        Here we prepared three tasks for the robot agent to complete in the real-world environment.
+        The tasks are as follows:
+        (1) Pick all fruits and place them on the plate. 
+        (2) Stack blocks in a pyramid shape. 
+        (3) Make the coffee from the coffee machine.
+      </h2>
+    </div>
+  </div>
+</section>
+
 
 <section class="hero is-light is-small">
   <div class="hero-body">
@@ -270,24 +340,18 @@
 
 
 
-<!-- Teaser video 1-->
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
       
       <h2 class="subtitle has-text-justified">
-        <b>Simulation demonstrations of various long-horizon task completion</b>. 
-        In this study, the robot agent is directly controlled by a task planner based on pre-trained LLMs via environment APIs. 
-        Our proposed framework employs a planner-reporter self evaluation architecture to utilize prior knowledge and reasoning ability from LLMs, 
-        allowing it to tackle with long-horizon seen and unseen tasks, and perform self checking,
-        which significantly enhances overall robustness on success rate. 
-        The video showcases both simulation demonstrations in Ravens environment, illustrating that our framework successfully 
-        completes all tasks encountered.
+        <b>Simulation demonstrations of various long-horizon tasks from both original LoHoRavens benchmark and generated pool</b>. 
+        We test our method in the original LoHoRavens benchmark and the generated pool, where the agent needs to perform up to 20 long-horizon tasks
       </h2>
     </div>
   </div>
 </section>
-<!-- End teaser video 1-->
+
 
 
 <!-- Paper abstract -->
@@ -298,12 +362,17 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Recent advancements in natural language-conditioned robotic manipulation have utilized imitation and reinforcement learning to enable robots to perform tasks based on human language commands. 
-However, these methods often struggle with generalization, adaptability, and the scarcity of scalable datasets—unlike the wealth of data available in domains like computer vision—particularly when tackling unstructured, long-horizon manipulation tasks.
-In this work, we introduce DAHLIA, a framework for embodied long-horizon manipulation that leverages large language models (LLMs) to directly interpret high-level language instructions and dynamically generate actionable motion primitives. 
-Unlike data-driven learning-based approaches, DAHLIA eliminates the dependency on extensive training datasets by utilizing the common sense and reasoning capabilities of pre-trained LLMs to dynamically adapt task planning and execution through closed-loop feedback.
-Our approach demonstrates robust performance across a diverse range of long-horizon manipulation tasks, achieving higher success rates in both seen and unseen scenarios. 
-This work paves the way for data-agnostic, generalizable robotic systems. 
+            Recent advances in language-conditioned robotic manipulation have leveraged imitation and reinforcement learning 
+            to enable robots to execute tasks from human commands. However, these approaches often suffer from limited generalization, 
+            adaptability, and the scarcity of large-scale specialized datasets—unlike data-rich fields such as computer vision—leading 
+            to challenges in handling complex long-horizon tasks.
+            In this work, We introduce DAHLIA, a data-agnostic framework for language-conditioned long-horizon robotic manipulation 
+            that leverages large language models (LLMs) for real-time task planning and execution.
+            Our framework features a dual-tunnel architecture, where a planner LLM decomposes tasks and generates executable plans, 
+            while a reporter LLM provides closed-loop feedback, ensuring adaptive re-planning and robust execution.
+            Additionally, we incorporate temporal abstraction and chain-of-thought (CoT) reasoning to enhance inference efficiency 
+            and traceability. DAHLIA achieves superior generalization and adaptability across diverse, unstructured environments, 
+            demonstrating state-of-the-art performance in both simulated and real-world long-horizon tasks.
           </p>
         </div>
       </div>
@@ -327,21 +396,23 @@ This work paves the way for data-agnostic, generalizable robotic systems.
         <h3 class="title is-4">Framework Overview</h3>
         <div class="content has-text-justified" bis_skin_checked="1">
           <p>
-            Inspired by the framework of <a target="”_blank”" href="https://cisnlp.github.io/lohoravens-webpage/">LoHoRavens</a>, we present a planner-reporter architecture 
-            for language-based task planning with vision-based task evaluations. The LLM planner takes in as input a natural language task goal embedded in a   
+            We present a planner-reporter architecture 
+            for language-based task planning with vision-based task evaluations to build a closed-loop feedback system. The LLM planner takes in as input a natural language task goal embedded in a   
             structured prompt, which instructs the LLM how to write task execution codes properly. Since the LLM is pre-trained with large amounts of text data from the internet,
             it acts as a powerful knowledge prior for grounding abstract concepts on colors, shapes, positions, arithmetics, etc., and imitates the prompt to output a task code.
             The reporter is also a multi-model LLM being able to take in images and text queries from the planner, and to return feedback including the scene discription and 
             evaluation to the planner. 
           </p>
         </div>
-        <img src="static/images/architecture.png" class="interpolation-image" alt="Interpolate start reference image.">
+        <img src="static/images/framework.jpg" class="interpolation-image" alt="Interpolate start reference image.">
         <br>
         <br>
-            <b>Paradigm 1:</b> The planner writes task code including various LMPs and APIs based on language
-            instructions, driving motion primitives to do robot manipulations, while the reporter
-            outputs the scene description and task evaluation from observation states with the help of
-            LMPs and APIs. 
+            <b>Fig. 1:</b> Framework of DAHLIA. 
+            Our framework utilizes a dual-tunnel structure to implement a planner-reporter closed-loop feedback mechanism for 
+            various long-horizon manipulation tasks. The planner, powered by LLMs, converts high-level language instructions 
+            and initial state into task plans, leveraging available LMPs/APIs to generate multi-step motion primitives with the
+            idea of temporal abstraction. The reporter, powered by a VLM, evaluates task outcomes using visual observations and provides 
+            feedback to the planner, enabling dynamic re-planning and robust performance in unstructured environments.
         <br>
         <br>
         <br>
@@ -428,8 +499,8 @@ This work paves the way for data-agnostic, generalizable robotic systems.
 <section class="hero is-light is-small">
   <div class="hero-body">
     <h2 class="subtitle has-text-justified">
-      <b>Simulation demonstrations in CALVIN Benchmark</b>. 
-      We also test the method in other benchmarks like CALVIN with different robot setup, where the agent needs to perform up to five tasks 
+      <b>Simulation demonstrations in CALVIN and Franka Kitchen Benchmark</b>. 
+      We also test the method in other benchmarks like CALVIN and Franka Kitchen with different robot setup, where the agent needs to perform up to five tasks 
       in a row according to language instructions.
     </h2>
     <div class="container">
@@ -461,6 +532,12 @@ This work paves the way for data-agnostic, generalizable robotic systems.
         <div class="item item-fixture">
           <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
             <source src="./static/videos/slide.mp4"
+                    type="video/mp4">
+          </video>
+        </div>
+        <div class="item item-fixture">
+          <video poster="" id="toby" autoplay controls muted loop playsinline height="100%">
+            <source src="./static/videos/kitchen1.mp4"
                     type="video/mp4">
           </video>
         </div>

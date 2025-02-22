@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Long-Horizon Language-Conditioned Robot Arm Manipulation with code Generation</title>
+  <title>Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedbackn</title>
   <link rel="icon" type="image/x-icon" href="static/images/tum_icon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -52,7 +52,7 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Data-Agnostic Robotic Long-Horizon Manipulation with Language-Conditioned Closed-Loop Feedback</h1>
+            <h1 class="title is-1 publication-title">Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedback</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
@@ -362,17 +362,11 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Recent advances in language-conditioned robotic manipulation have leveraged imitation and reinforcement learning 
-            to enable robots to execute tasks from human commands. However, these approaches often suffer from limited generalization, 
-            adaptability, and the scarcity of large-scale specialized datasets—unlike data-rich fields such as computer vision—leading 
-            to challenges in handling complex long-horizon tasks.
-            In this work, We introduce DAHLIA, a data-agnostic framework for language-conditioned long-horizon robotic manipulation 
-            that leverages large language models (LLMs) for real-time task planning and execution.
-            Our framework features a dual-tunnel architecture, where a planner LLM decomposes tasks and generates executable plans, 
-            while a reporter LLM provides closed-loop feedback, ensuring adaptive re-planning and robust execution.
-            Additionally, we incorporate temporal abstraction and chain-of-thought (CoT) reasoning to enhance inference efficiency 
-            and traceability. DAHLIA achieves superior generalization and adaptability across diverse, unstructured environments, 
-            demonstrating state-of-the-art performance in both simulated and real-world long-horizon tasks.
+            Recent advances in language-conditioned robotic manipulation have leveraged imitation and reinforcement learning to enable robots to execute tasks from human commands. However, these approaches often suffer from limited generalization, adaptability, and the scarcity of large-scale specialized datasets—unlike data-rich fields such as computer vision—leading to challenges in handling complex long-horizon tasks.
+            In this work, We introduce DAHLIA, a data-agnostic framework for language-conditioned long-horizon robotic manipulation that leverages large language models (LLMs) for real-time task planning and execution.
+            Our framework features a dual-tunnel architecture, where a planner LLM decomposes tasks and generates executable plans, while a reporter LLM provides closed-loop feedback, ensuring adaptive re-planning and robust execution.
+            Additionally, we incorporate chain-of-thought (CoT) in model reasoning and temporal abstraction in action execution to enhance efficiency and traceability. 
+            DAHLIA achieves robust generalization across diverse long-horizon tasks, demonstrating state-of-the-art performance in both simulated and real-world scenarios.
           </p>
         </div>
       </div>

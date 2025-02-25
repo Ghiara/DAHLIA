@@ -43,6 +43,36 @@
   <script src="static/js/bulma-carousel.min.js"></script>
   <script src="static/js/bulma-slider.min.js"></script>
   <script src="static/js/index.js"></script>
+
+  
+  <style>
+    table {
+        width: 50%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 18px;
+        text-align: left;
+    }
+    th, td {
+        padding: 10px;
+        border: 1px solid #ddd;
+    }
+    th {
+        background-color: #d3d3d3;
+    }
+    .gray-row {
+        background-color: #f0f0f0;
+    }
+    caption {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    .footnotes {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
@@ -478,26 +508,93 @@
           Example of the current task for LMP parse_obj_name().
         </h2>
       </div>
-       
      </div>
 
         <!--/ Re-rendering. -->
-
-        
       </div>
     </div>
 
   </div>
 </div></section>
 
+<section class="section">
+  <div class="container is-max-widescreen" bis_skin_checked="1">
+
+    <div class="rows" bis_skin_checked="1">
+
+
+      <!-- Animation. -->
+      <div class="rows is-centered " bis_skin_checked="1">
+        <div class="row is-full-width" bis_skin_checked="1">
+          <h3 class="title is-4">Scalability</h3>
+          <div class="content has-text-justified" bis_skin_checked="1">
+            <p>
+              To assess the scalability and generalization of our framework across different embodiments and task setups, 
+              we conduct additional experiments using the CALVIN and Franka Kitchen benchmarks. The average success rates 
+              for individual subtasks are presented in Table \ref{tab:scalability}. The results show that our default 
+              dual-tunnel DAHLIA setup consistently outperforms its planner-only variation (DAHLIA GPT-4o-mini<sup>P</sup>), 
+              demonstrating the effectiveness of its closed-loop feedback mechanism in improving execution reliability. 
+              Our framework achieves 100% success in most tasks, including lift block, open drawer, open slide door, kettle, 
+              and slider cabinet, while also surpassing the planner-only model in complex tasks requiring precise coordination, 
+              such as rotate block (+4%) and turn on switch (+4%) in CALVIN, as well as top burner (+6%) and bottom burner (+8%) 
+              in Franka Kitchen. Notably, the planner-only model may struggle in tasks requiring highly accurate task planning and 
+              fine-grained manipulation motions. For example, in the "top burner" and "bottom burner" tasks in Franka Kitchen, 
+              the robot must accurately reach the correct rotary knob and rotate it counterclockwise by 45 degrees to activate 
+              the corresponding burner. Errors in task planning or dexterous execution—such as selecting the wrong switch or rotating 
+              in the wrong direction—can lead to complete task failure. In such cases, closed-loop feedback in the dual-tunnel plays a 
+              critical role by detecting and correcting execution errors, enabling the planner to refine its actions and complete 
+              the global task plan. The performance gap between the two DAHLIA variations is relatively small, as both employ temporal 
+              abstraction and CoT-based task planning, ensuring efficient long-horizon primitive execution. However, the closed-loop 
+              feedback mechanism can enhance robustness, allowing for error correction and ensuring greater stability in complex environments. 
+              These results further validate DAHLIA's robust execution and adaptive reasoning capabilities, demonstrating its ability to 
+              generalize across diverse tasks and embodiments.
+            </p>
+
+            <table>
+              <caption>Average success rates (%) for individual subtasks in CALVIN and Franka Kitchen</caption>
+              <tr>
+                  <th>CALVIN Tasks</th>
+                  <th>&dagger;DAHLIA (GPT-4o-mini<sup>P</sup>)</th>
+                  <th>DAHLIA (Ours)</th>
+              </tr>
+              <tr><td>lift block</td><td>100</td><td>100</td></tr>
+              <tr class="gray-row"><td>rotate block</td><td>94</td><td>98</td></tr>
+              <tr><td>turn on switch</td><td>96</td><td>100</td></tr>
+              <tr class="gray-row"><td>open slide door</td><td>100</td><td>100</td></tr>
+              <tr><td>open drawer</td><td>100</td><td>100</td></tr>
+              <tr class="gray-row"><td><strong>overall</strong></td><td>98.00</td><td>99.60</td></tr>
+              
+              <tr>
+                  <th>Franka Kitchen Tasks</th>
+                  <th>&dagger;DAHLIA (GPT-4o-mini<sup>P</sup>)</th>
+                  <th>DAHLIA (Ours)</th>
+              </tr>
+              <tr><td>microwave</td><td>98</td><td>100</td></tr>
+              <tr class="gray-row"><td>kettle</td><td>100</td><td>100</td></tr>
+              <tr><td>light</td><td>98</td><td>100</td></tr>
+              <tr class="gray-row"><td>top burner</td><td>90</td><td>96</td></tr>
+              <tr><td>bottom burner</td><td>90</td><td>98</td></tr>
+              <tr class="gray-row"><td>slider cabinet</td><td>100</td><td>100</td></tr>
+              <tr><td>hinge cabinet</td><td>96</td><td>98</td></tr>
+              <tr class="gray-row"><td><strong>overall</strong></td><td>96.00</td><td>98.86</td></tr>
+          </table>
+          <div class="footnotes">
+              <p><sup>P</sup> indicates the Planner model. &dagger; indicates the framework barely uses a Planner-only tunnel for open-loop control without the Reporter.</p>
+          </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <section class="hero is-light is-small">
   <div class="hero-body">
-    <h2 class="subtitle has-text-justified">
-      <b>Simulation demonstrations in CALVIN and Franka Kitchen Benchmark</b>. 
-      We also test the method in other benchmarks like CALVIN and Franka Kitchen with different robot setup, where the agent needs to perform up to five tasks 
-      in a row according to language instructions.
-    </h2>
+    
     <div class="container">
+      
       <div id="results-carousel" class="carousel results-carousel">
         <div class="item item-odd">
           <video poster="" id="coffee" autoplay controls muted loop playsinline height="100%">
@@ -537,10 +634,28 @@
         </div>
       </div>
     </div>
+    <!-- <h2 class="subtitle has-text-justified">
+      <b>Simulation demonstrations in CALVIN and Franka Kitchen Benchmark</b>. 
+      We also test the method in other benchmarks like CALVIN and Franka Kitchen with different robot setup, where the agent needs to perform up to five tasks 
+      in a row according to language instructions.
+    </h2> -->
   </div>
 </section>
 
 
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <h2 class="subtitle has-text-justified">
+        <b>Simulation demonstrations in CALVIN and Franka Kitchen Benchmark</b>. 
+        We also test the method in other benchmarks like CALVIN and Franka Kitchen with different robot setup, 
+        where the agent needs to perform various tasks in a table-top environment or a kitchen environment. 
+        For CALVIN, the agent needs to perform up to five tasks in a row according to language instructions.
+        For Franka Kitchen, the agent needs to perform up to 4 sub-tasks in a row according to language instructions.
+      </h2>
+    </div>
+  </div>
+</section>
 
 <!-- Image carousel -->
 

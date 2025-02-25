@@ -34,6 +34,40 @@ demonstrating state-of-the-art performance in both simulated and real-world long
 
 ![framework](/docs/static/images/framework.jpg "Framework of DAHLIA")
 
+## Demonstration Videos
+
+<div align="center">
+  <table>
+    <tr>
+      <td><video width="200" controls><source src="/docs/static/videos/stack_all_zone.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/stack_same_size.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/stack_same_color.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/stack_color_size.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/stack_pos_color.mp4" type="video/mp4"></video></td>
+    </tr>
+    <tr>
+      <td><video width="200" controls><source src="/docs/static/videos/absolute_pos.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/aboslute_pos_size.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/matching_bowl.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/mismatching_bowl.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/alternate_color.mp4" type="video/mp4"></video></td>
+    </tr>
+    <tr>
+      <td><video width="200" controls><source src="/docs/static/videos/pyramid.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/cube.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/circle.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/ball.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/concentric.mp4" type="video/mp4"></video></td>
+    </tr>
+    <tr>
+      <td><video width="200" controls><source src="/docs/static/videos/odd.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/most.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/divide.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/bisector.mp4" type="video/mp4"></video></td>
+      <td><video width="200" controls><source src="/docs/static/videos/fixture.mp4" type="video/mp4"></video></td>
+    </tr>
+  </table>
+</div>
 
 ## 1. Installation
 

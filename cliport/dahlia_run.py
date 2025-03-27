@@ -1313,7 +1313,7 @@ def setup_LMP(env, cfg_tabletop, llm='gpt4',
     return lmp_tabletop_ui
 
 
-@hydra.main(config_path='./cfg', config_name='cap')
+@hydra.main(config_path='./cfg', config_name='dahlia')
 def main(cfg):
     """
     Use the same LLM model for both LMP and LMPFGen.
@@ -1407,7 +1407,7 @@ def main(cfg):
     if record:
         print('Recording...')
         # Collect training data from oracle demonstrations.
-    if mode == 'cap':
+    if mode == 'dahlia':
         data_path = os.path.join(cfg['data_dir'], "{}-{}".format(cfg['task'], mode))
         dataset = RavensDataset(data_path, cfg, n_demos=0, augment=False)
         print(f"Saving to: {data_path} if save_data")

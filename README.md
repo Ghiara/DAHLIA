@@ -117,7 +117,7 @@ To directly try to complete a task (based on existing task file).
 Fill in **task name** to locate the task file.
 
 ```bash
-python cliport/cap.py task=[task name] mode=cap check=False
+python cliport/dahlia_run.py task=[task name] mode=dahlia check=False
 ```
 
 ### 2.3 Generate Test Task Dataset

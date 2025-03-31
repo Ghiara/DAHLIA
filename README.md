@@ -139,6 +139,34 @@ finally show success rate.
 python cliport/dahlia_run.py task=[task name] mode=test check=False n=1
 ```
 
+### 2.5 Dahlia task names and task goal Instructions
+<div align="center">
+
+
+| Task ID | Task Name                                           | Task Goal                                                                                                                                     |
+|--------:|-----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| A.      | stack-all-blocks-on-a-zone                          | "Stack all blocks in the [COLOR] zone."                                                                                                       |
+| B.      | stack-blocks-of-same-size                          | "Stack blocks of the same size in the [COLOR1] zone and [COLOR2] zone respectively."                                                         |
+| C.      | stack-blocks-of-same-color                         | "Stack all the blocks of the same color together in the same colored zone."                                                                  |
+| D.      | stack-blocks-by-color-and-size                     | "Stack only the [SIZE] blocks of [COLOR_TYPE] color in the [COLOR] zone."                                                                    |
+| E.      | stack-blocks-by-relative-position-and-color        | "Stack all the blocks, which are to the [REL_POS] of the [COLOR1] block with [POS_TYPE] distance larger than 0.05 unit, in the [COLOR2] zone." |
+| F.      | move-blocks-between-absolute-positions             | "Move all the blocks in the [POS1] area to [POS2] area."                                                                                      |
+| G.      | move-blocks-between-absolute-positions-by-size     | "Move all the [SIZE] blocks in the [POS1] area to [POS2] area."                                                                              |
+| H.      | put-block-into-matching-bowl                       | "Put the blocks in the bowls with matching colors."                                                                                           |
+| I.      | put-block-into-mismatching-bowl                    | "Put the blocks in the bowls with mismatching colors."                                                                                        |
+| J.      | stack-blocks-with-alternate-color                  | "Stack blocks with alternate colors on the [COLOR1] zone, starting with the [COLOR2] color."                                                  |
+| G1      | build-rectangular-pyramid                 | "Construct a 9-4-1 rectangular pyramid structure in the zone using 14 blocks of the same color."                                                                                                          |
+| G2      | build-cube                                | "Construct a 2*2*2 cube structure in the zone using 8 blocks of the same color."                                                                                                                          |
+| G3      | construct-circle-with-blocks              | "Construct a circle with suitable radius with alternating [COLOR1] and [COLOR2] blocks in the zone."                                                                                                     |
+| G4      | construct-circle-ball-middle              | "Construct a circle with suitable radius with alternating [COLOR1] and [COLOR2] blocks around the ball."                                                                                                  |
+| G5      | build-concentric-circles                  | "Construct two concentric circles in the zone using [NUM] [COLOR1] and [NUM + 4] [COLOR2] blocks."                                                                                                        |
+| G6      | divide-blocks                             | "Divide the blocks into groups of [NUM] and stack each group (also including the group with block number less than [NUM]) in a different zone."                                                          |
+| G7      | max-odd-number-blocks-in-same-color-zone  | "Place the maximal odd number of blocks of the same color in each correspondingly colored zone."                                                                                                          |
+| G8      | stack-most-color-block                    | "Stack blocks of the same color that has the largest quantity in the zone."                                                                                                                               |
+| G9      | zone-bisector                             | "Arrange all blocks on the zone bisector line between two symmetrically placed zones evenly on the tabletop, and the gap between two adjacent blocks' edges should be near the block size, and the line connecting the center of the zones also bisects these blocks." |
+| G10     | insert-blocks-in-fixture                  | "Each L-shaped fixture can hold three blocks, suppose the block size is (a,a,a), then in fixture's local coordinate system, the three places that can hold blocks are [(0,0,0),(a,0,0),(0,a,0)]. Fill in all the fixtures which have random position and rotation with blocks, and make sure in the end in every fixture there are three blocks with different colors." |
+
+</div>
 
 
 ## 3. Prompting
@@ -237,7 +265,24 @@ Based on above mention promptings, we can help the agent to build a systematical
 
 ----------------------------------------------------------------------------
 
-## 4. Acknowledgements
+## 4. Citation
+
+if you use this work, please cite:
+
+```bibtex
+    @misc{meng2025dataagnosticroboticlonghorizonmanipulation,
+        title={Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedback}, 
+        author={Yuan Meng and Xiangtong Yao and Haihui Ye and Yirui Zhou and Shengqiang Zhang and Zhenshan Bing and Alois Knoll},
+        year={2025},
+        eprint={2503.21969},
+        archivePrefix={arXiv},
+        primaryClass={cs.RO},
+        url={https://arxiv.org/abs/2503.21969}, 
+    }
+```
+
+
+## 5. Acknowledgements
 
 This project uses code or idea from open-source projects and datasets including:
 
@@ -273,3 +318,4 @@ License: [MIT](https://github.com/openai/CLIP/blob/main/LICENSE)
 
 Origin: [Dataset](https://app.ignitionrobotics.org/GoogleResearch/fuel/collections/Google%20Scanned%20Objects)  
 License: [Creative Commons BY 4.0](https://creativecommons.org/licenses/by/4.0/)  
+

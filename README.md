@@ -65,8 +65,11 @@ conda activate dahlia
 ```
 
 ### 1.3 Install Other Packages (option)
-**NOTE:** DAHLIA principly does not need training. Install Pytorch in case you want to 
+
+> [!NOTE]
+> DAHLIA principly does not need training. Install Pytorch in case you want to 
 fine-tune the LLM or use CLIPort. 
+
 ```bash
 pip install -r requirements.txt
 pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113
@@ -81,11 +84,13 @@ python setup.py develop
 ### 2.1 Generate Task File (option)
 Generate more new tasks if needed.
 
-**reference number** determines the number of existing task candidates being
+> [!TIP]
+> **reference number** determines the number of existing task candidates being
 prompted to LLM.
 
-For top-down generation, fill in **task name** and **task instruction** (optional)
-to specify the desired task.
+> [!TIP]
+> For top-down generation, fill in **task name** and **task instruction** (optional)
+to specify the desired task. (Refer Section 2.5 for more details)
 
 ```bash
 # bottom-up template generation
@@ -171,9 +176,11 @@ python cliport/dahlia_run.py task=[task name] mode=test check=False n=1
 
 ## 3. Prompting
 
-The prompting of Task generation can visit at `/prompts/bottomup_task_generation_prompt_new/*` or `/prompts/topdown_task_generation_prompt/*`.
+> [!IMPORTANT]
+> The prompting of Task generation can visit at `/prompts/bottomup_task_generation_prompt_new/*` or `/prompts/topdown_task_generation_prompt/*`.
 
-The prompting of DAHLIA role definition can visit at `/prompts/dahlia/*`
+> [!IMPORTANT]
+> The prompting of DAHLIA role definition can visit at `/prompts/dahlia/*`
 
 As described in the paper, the prompting of each LMP planner contains basically following parts:
 

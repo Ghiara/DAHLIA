@@ -50,6 +50,7 @@ Enter the root directory of this project on your device. The root directory cont
 
 We recommend to manage the python environment with **conda** and suggest [Miniconda](https://docs.conda.io/en/latest/miniconda.html) as a light-weight installation.
 
+>[!Note]
 > You may also use different environment tools such as python's *venv*. Please refer
 to *requirements.txt* in this case. In the following, we will proceed with conda.
 
@@ -144,32 +145,33 @@ finally show success rate.
 python cliport/dahlia_run.py task=[task name] mode=test check=False n=1
 ```
 
-### 2.5 Dahlia task names and task goal Instructions
+### 2.5 DAHLIA Task Names and Instructions
+
 <div align="center">
 
+| Task ID | Task Name                                           | Task Goal                                                                                                                                     | Task Snapshot |
+|:--------|:----------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------|:--------------|
+| A.      | stack-all-blocks-on-a-zone                          | "Stack all blocks in the [COLOR] zone."                                                                                                       | ![](docs/imgs/all_on_zone.jpg) |
+| B.      | stack-blocks-of-same-size                           | "Stack blocks of the same size in the [COLOR1] zone and [COLOR2] zone respectively."                                                         | ![](docs/imgs/block_same_size.jpg) |
+| C.      | stack-blocks-of-same-color                          | "Stack all the blocks of the same color together in the same colored zone."                                                                  | ![](docs/imgs/block_same_color.jpg) |
+| D.      | stack-blocks-by-color-and-size                      | "Stack only the [SIZE] blocks of [COLOR_TYPE] color in the [COLOR] zone."                                                                    | ![](docs/imgs/block_color_and_size.jpg) |
+| E.      | stack-blocks-by-relative-position-and-color         | "Stack all the blocks, which are to the [REL_POS] of the [COLOR1] block with [POS_TYPE] distance larger than 0.05 unit, in the [COLOR2] zone." | ![](docs/imgs/relative_pos_and_color.jpg) |
+| F.      | move-blocks-between-absolute-positions              | "Move all the blocks in the [POS1] area to [POS2] area."                                                                                      | ![](docs/imgs/move_absolu.jpg) |
+| G.      | move-blocks-between-absolute-positions-by-size      | "Move all the [SIZE] blocks in the [POS1] area to [POS2] area."                                                                              | ![](docs/imgs/move_absolu_size.jpg) |
+| H.      | put-block-into-matching-bowl                        | "Put the blocks in the bowls with matching colors."                                                                                           | ![](docs/imgs/matching_bowl.jpg) |
+| I.      | put-block-into-mismatching-bowl                     | "Put the blocks in the bowls with mismatching colors."                                                                                        | ![](docs/imgs/mismatching_bowl.jpg) |
+| J.      | stack-blocks-with-alternate-color                   | "Stack blocks with alternate colors on the [COLOR1] zone, starting with the [COLOR2] color."                                                  | ![](docs/imgs/alternate_color.jpg) |
+| G1      | build-rectangular-pyramid                           | "Construct a 9-4-1 rectangular pyramid structure in the zone using 14 blocks of the same color."                                              | ![](docs/imgs/build_pyramid.jpg) |
+| G2      | build-cube                                          | "Construct a 2*2*2 cube structure in the zone using 8 blocks of the same color."                                                              | ![](docs/imgs/build_cube.jpg) |
+| G3      | construct-circle-with-blocks                        | "Construct a circle with suitable radius with alternating [COLOR1] and [COLOR2] blocks in the zone."                                         | ![](docs/imgs/circle_with_blocks.jpg) |
+| G4      | construct-circle-ball-middle                        | "Construct a circle with suitable radius with alternating [COLOR1] and [COLOR2] blocks around the ball."                                     | ![](docs/imgs/circle_ball_middle.jpg) |
+| G5      | build-concentric-circles                            | "Construct two concentric circles in the zone using [NUM] [COLOR1] and [NUM + 4] [COLOR2] blocks."                                           | ![](docs/imgs/concentric_circles.jpg) |
+| G6      | divide-blocks                                       | "Divide the blocks into groups of [NUM] and stack each group (also including the group with block number less than [NUM]) in a different zone." | ![](docs/imgs/divide_blocks.jpg) |
+| G7      | max-odd-number-blocks-in-same-color-zone            | "Place the maximal odd number of blocks of the same color in each correspondingly colored zone."                                              | ![](docs/imgs/max_odd_number.jpg) |
+| G8      | stack-most-color-block                              | "Stack blocks of the same color that has the largest quantity in the zone."                                                                   | ![](docs/imgs/stack_most_color_blocks.jpg) |
+| G9      | zone-bisector                                       | "Arrange all blocks on the zone bisector line between two symmetrically placed zones evenly on the tabletop, and the gap between two adjacent blocks' edges should be near the block size, and the line connecting the center of the zones also bisects these blocks." | ![](docs/imgs/zone_bisector.jpg) |
+| G10     | insert-blocks-in-fixture                            | "Each L-shaped fixture can hold three blocks, suppose the block size is (a,a,a), then in fixture's local coordinate system, the three places that can hold blocks are [(0,0,0),(a,0,0),(0,a,0)]. Fill in all the fixtures which have random position and rotation with blocks, and make sure in the end in every fixture there are three blocks with different colors." | ![](docs/imgs/different_fixture.jpg) |
 
-| Task ID | Task Name                                           | Task Goal                                                                                                                                     |
-|--------:|-----------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| A.      | stack-all-blocks-on-a-zone                          | "Stack all blocks in the [COLOR] zone."                                                                                                       |
-| B.      | stack-blocks-of-same-size                          | "Stack blocks of the same size in the [COLOR1] zone and [COLOR2] zone respectively."                                                         |
-| C.      | stack-blocks-of-same-color                         | "Stack all the blocks of the same color together in the same colored zone."                                                                  |
-| D.      | stack-blocks-by-color-and-size                     | "Stack only the [SIZE] blocks of [COLOR_TYPE] color in the [COLOR] zone."                                                                    |
-| E.      | stack-blocks-by-relative-position-and-color        | "Stack all the blocks, which are to the [REL_POS] of the [COLOR1] block with [POS_TYPE] distance larger than 0.05 unit, in the [COLOR2] zone." |
-| F.      | move-blocks-between-absolute-positions             | "Move all the blocks in the [POS1] area to [POS2] area."                                                                                      |
-| G.      | move-blocks-between-absolute-positions-by-size     | "Move all the [SIZE] blocks in the [POS1] area to [POS2] area."                                                                              |
-| H.      | put-block-into-matching-bowl                       | "Put the blocks in the bowls with matching colors."                                                                                           |
-| I.      | put-block-into-mismatching-bowl                    | "Put the blocks in the bowls with mismatching colors."                                                                                        |
-| J.      | stack-blocks-with-alternate-color                  | "Stack blocks with alternate colors on the [COLOR1] zone, starting with the [COLOR2] color."                                                  |
-| G1      | build-rectangular-pyramid                 | "Construct a 9-4-1 rectangular pyramid structure in the zone using 14 blocks of the same color."                                                                                                          |
-| G2      | build-cube                                | "Construct a 2*2*2 cube structure in the zone using 8 blocks of the same color."                                                                                                                          |
-| G3      | construct-circle-with-blocks              | "Construct a circle with suitable radius with alternating [COLOR1] and [COLOR2] blocks in the zone."                                                                                                     |
-| G4      | construct-circle-ball-middle              | "Construct a circle with suitable radius with alternating [COLOR1] and [COLOR2] blocks around the ball."                                                                                                  |
-| G5      | build-concentric-circles                  | "Construct two concentric circles in the zone using [NUM] [COLOR1] and [NUM + 4] [COLOR2] blocks."                                                                                                        |
-| G6      | divide-blocks                             | "Divide the blocks into groups of [NUM] and stack each group (also including the group with block number less than [NUM]) in a different zone."                                                          |
-| G7      | max-odd-number-blocks-in-same-color-zone  | "Place the maximal odd number of blocks of the same color in each correspondingly colored zone."                                                                                                          |
-| G8      | stack-most-color-block                    | "Stack blocks of the same color that has the largest quantity in the zone."                                                                                                                               |
-| G9      | zone-bisector                             | "Arrange all blocks on the zone bisector line between two symmetrically placed zones evenly on the tabletop, and the gap between two adjacent blocks' edges should be near the block size, and the line connecting the center of the zones also bisects these blocks." |
-| G10     | insert-blocks-in-fixture                  | "Each L-shaped fixture can hold three blocks, suppose the block size is (a,a,a), then in fixture's local coordinate system, the three places that can hold blocks are [(0,0,0),(a,0,0),(0,a,0)]. Fill in all the fixtures which have random position and rotation with blocks, and make sure in the end in every fixture there are three blocks with different colors." |
 
 </div>
 

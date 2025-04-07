@@ -65,7 +65,7 @@ Activate the new environment by running (Make sure that no other environment was
 conda activate dahlia
 ```
 
-### 1.3 Install Other Packages (option)
+### 1.3 Install Other Packages (OPTION)
 
 > [!NOTE]
 > DAHLIA principly does not need training. Install Pytorch in case you want to 

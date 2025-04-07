@@ -82,7 +82,8 @@ python setup.py develop
 
 ## 2. Run code
 
-### 2.1 Generate Task File (option)
+### 2.1 Generate Task File (OPTION)
+
 Generate more new tasks if needed.
 
 > [!TIP]
@@ -97,14 +98,14 @@ to specify the desired task. (Refer Section 2.5 for more details)
 # bottom-up template generation
 python gensim/run_simulation.py \ 
     prompt_folder=bottomup_task_generation_prompt \ 
-    save_memory=True load_memory=True \ 
+    save_memory=True load_memory=False \ 
     task_description_candidate_num=[reference number] \ 
     use_template=True
 
 # top-down task generation
 python gensim/run_simulation.py \
     prompt_folder=topdown_task_generation_prompt \ 
-    save_memory=True load_memory=True \
+    save_memory=True load_memory=False \
     task_description_candidate_num=[reference number] \ 
     use_template=True target_task_name=[task name] \
     target_task_description=[task instruction]
@@ -112,7 +113,7 @@ python gensim/run_simulation.py \
 # task-conditioned chain-of-thought generation
 python gensim/run_simulation.py \
     prompt_folder=topdown_chain_of_thought_prompt \ 
-    save_memory=True load_memory=True \ 
+    save_memory=True load_memory=False \ 
     task_description_candidate_num=[reference number] \ 
     use_template=True target_task_name=[task name] \ 
     target_task_description=[task instruction] 
@@ -172,9 +173,9 @@ python cliport/dahlia_run.py task=[task name] mode=test check=False n=1
 | G9      | zone-bisector                                       | "Arrange all blocks on the zone bisector line between two symmetrically placed zones evenly on the tabletop, and the gap between two adjacent blocks' edges should be near the block size, and the line connecting the center of the zones also bisects these blocks." | ![](docs/imgs/zone_bisector.jpg) |
 | G10     | insert-blocks-in-fixture                            | "Each L-shaped fixture can hold three blocks, suppose the block size is (a,a,a), then in fixture's local coordinate system, the three places that can hold blocks are [(0,0,0),(a,0,0),(0,a,0)]. Fill in all the fixtures which have random position and rotation with blocks, and make sure in the end in every fixture there are three blocks with different colors." | ![](docs/imgs/different_fixture.jpg) |
 
-
 </div>
 
+For more details about task setup, refer [here](cliport/loho_tasks/) and [here](cliport/generated_tasks/).
 
 ## 3. Prompting
 
@@ -302,8 +303,8 @@ License: [MIT](https://github.com/liruiw/GenSim/blob/main/LICENSE)
 
 #### LoHoRavens
 
-Origin: [https://github.com/Shengqiang-Zhang/lohoravens](https://github.com/Shengqiang-Zhang/lohoravens)  
-License: [Apache 2.0](https://github.com/Shengqiang-Zhang/lohoravens/blob/main/LICENSE)
+Origin: [https://github.com/Shengqiang-Zhang/LoHo-Ravens](https://github.com/Shengqiang-Zhang/LoHo-Ravens)  
+License: [Apache 2.0](https://github.com/Shengqiang-Zhang/LoHo-Ravens/blob/main/LICENSE)
 
 #### Code as Policies
 

@@ -98,14 +98,14 @@ to specify the desired task. (Refer Section 2.5 for more details)
 # bottom-up template generation
 python gensim/run_simulation.py \ 
     prompt_folder=bottomup_task_generation_prompt \ 
-    save_memory=True load_memory=False \ 
+    save_memory=True load_memory=True \ 
     task_description_candidate_num=[reference number] \ 
     use_template=True
 
 # top-down task generation
 python gensim/run_simulation.py \
     prompt_folder=topdown_task_generation_prompt \ 
-    save_memory=True load_memory=False \
+    save_memory=True load_memory=True \
     task_description_candidate_num=[reference number] \ 
     use_template=True target_task_name=[task name] \
     target_task_description=[task instruction]
@@ -113,7 +113,7 @@ python gensim/run_simulation.py \
 # task-conditioned chain-of-thought generation
 python gensim/run_simulation.py \
     prompt_folder=topdown_chain_of_thought_prompt \ 
-    save_memory=True load_memory=False \ 
+    save_memory=True load_memory=True \ 
     task_description_candidate_num=[reference number] \ 
     use_template=True target_task_name=[task name] \ 
     target_task_description=[task instruction] 

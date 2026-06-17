@@ -1,36 +1,27 @@
 # DAHLIA
 
 <div align="center">
-Official implementation of paper "Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedback"
+Official implementation of paper "Long-Horizon Robotic Manipulation with Progressive In-Context Code Generation and Episodic Feedback"
 
 ### [[Project Website]](https://ghiara.github.io/DAHLIA/) 
 
-[Yuan Meng](https://github.com/Ghiara)<sup>1,</sup>, [Xiangtong Yao](https://www.ce.cit.tum.de/air/people/xiangtong-yao/)<sup>1</sup>, [Haihui Ye]()<sup>1</sup>, [Yirui Zhou]()<sup>1</sup>, [Shengqiang Zhang]()<sup>2</sup>,
+[Yuan Meng](https://github.com/Ghiara)<sup>1,</sup>, [Xiangtong Yao](https://www.ce.cit.tum.de/air/people/xiangtong-yao/)<sup>1</sup>, [Haihui Ye]()<sup>1</sup>, [Yirui Zhou]()<sup>1</sup>, [Shengqiang Zhang]()<sup>2</sup>, [Zhenguo Sun]()<sup>3</sup>, [Xukun Li]()<sup>1</sup>,
 
-[Zhenshan Bing](https://github.com/zhenshan-bing)<sup>3,&dagger;</sup>, [Alois Knoll](https://www.ce.cit.tum.de/air/people/prof-dr-ing-habil-alois-knoll/)<sup>1</sup>,
+[Zhenshan Bing](https://github.com/zhenshan-bing)<sup>4,&dagger;</sup>, [Alois Knoll](https://www.ce.cit.tum.de/air/people/prof-dr-ing-habil-alois-knoll/)<sup>1</sup>,
 </div>
 
 <p align="center">
 <small><sup>1</sup>The School of Computation, Information and Technology, Technical University of Munich, Germany</small>
 <br><small><sup>2</sup>Center for Information and Language Processing, Ludwig Maximilian University of Munich, Germany</small>
-<br><small><sup>3</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China</small>
-<br><small><sup>&dagger;</sup>Corresponding author: zhenshan.bing@tum.de</small>
+<br><small><sup>3</sup>Beijing Academy of Artificial Intelligence (BAAI)</small>
+<br><small><sup>4</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China</small>
+<br><small><sup>&dagger;</sup>Corresponding author: bing@nju.edu.cn</small>
 </p>
 
 
 ## Abstract
 
-Recent advances in language-conditioned robotic manipulation have leveraged imitation and reinforcement learning 
-to enable robots to execute tasks from human commands. However, these approaches often suffer from limited generalization, 
-adaptability, and the scarcity of large-scale specialized datasets—unlike data-rich fields such as computer vision—leading 
-to challenges in handling complex long-horizon tasks.
-In this work, We introduce DAHLIA, a data-agnostic framework for language-conditioned long-horizon robotic manipulation 
-that leverages large language models (LLMs) for real-time task planning and execution.
-Our framework features a dual-tunnel architecture, where a planner LLM decomposes tasks and generates executable plans, 
-while a reporter LLM provides closed-loop feedback, ensuring adaptive re-planning and robust execution.
-Additionally, we incorporate temporal abstraction and chain-of-thought (CoT) reasoning to enhance inference efficiency 
-and traceability. DAHLIA achieves superior generalization and adaptability across diverse, unstructured environments, 
-demonstrating state-of-the-art performance in both simulated and real-world long-horizon tasks.
+Long-horizon robotic manipulation requires robots to compose perception, reasoning, and action over extended task sequences, yet existing language-conditioned frameworks often rely on dense step-wise feedback, learned action policies, or unstructured prompting, which limits robustness and generalization. We propose DAHLIA, a data-agnostic code-generation framework that treats long-horizon manipulation as episodic task planning and evaluation. DAHLIA uses progressively organized in-context examples with chain-of-thought reasoning to guide an LLM in synthesizing executable code plans from language instructions. To improve robustness under partial observability, a VLM-based reporter evaluates task outcomes only after each execution episode and provides structured feedback for replanning, avoiding the overhead of per-step inference. Experiments on LoHoRavens, CALVIN, Franka Kitchen, and real-world manipulation tasks show that DAHLIA achieves strong performance on over 30 long-horizon tasks and improves generalization to unseen scenarios, including cluttered scenes and occluded objects.
 
 ![framework](/docs/static/images/framework.jpg "Framework of DAHLIA")
 

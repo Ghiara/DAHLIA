@@ -24,7 +24,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-  <title>Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedbackn</title>
+  <title>Long-Horizon Robotic Manipulation with Progressive In-Context Code Generation and Episodic Feedback</title>
   <link rel="icon" type="image/x-icon" href="static/images/tum_icon.ico">
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
   rel="stylesheet">
@@ -82,7 +82,7 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">Data-Agnostic Robotic Long-Horizon Manipulation with Vision-Language-Guided Closed-Loop Feedback</h1>
+            <h1 class="title is-1 publication-title">Long-Horizon Robotic Manipulation with Progressive In-Context Code Generation and Episodic Feedback</h1>
             <div class="is-size-5 publication-authors">
               <!-- Paper authors -->
               <span class="author-block">
@@ -95,9 +95,13 @@
                 <a target="_blank">Yirui Zhou</a><sup>1</sup>,</span>
               <span class="author-block">
                 <a target="_blank">Shengqiang Zhang</a><sup>2</sup>,</span>
+              <span class="author-block">
+                <a target="_blank">Zhenguo Sun</a><sup>3</sup>,</span>
+              <span class="author-block">
+                <a target="_blank">Xukun Li</a><sup>1</sup>,</span>
               <br>
               <span class="author-block">
-                <a target="_blank">Zhenshan Bing</a><sup>3,&dagger;</sup>,</span>
+                <a target="_blank">Zhenshan Bing</a><sup>4,&dagger;</sup>,</span>
               <span class="author-block">
                 <a target="_blank">Anois Knoll</a><sup>1</sup>,</span>
                     
@@ -107,7 +111,8 @@
                     <span class="author-block">
                       <small><sup>1</sup>School of Computation, Information and Technology, Technical University of Munich, Germany</small>
                       <br><small><sup>2</sup>Center for Information and Language Processing, Ludwig Maximilian University of Munich, Germany</small>
-                      <br><small><sup>3</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China</small>
+                      <br><small><sup>3</sup>Beijing Academy of Artificial Intelligence (BAAI)</small>
+                      <br><small><sup>4</sup>State Key Laboratory for Novel Software Technology, Nanjing University, China</small>
                       <br><small><sup>&dagger;</sup>Corresponding author: zhenshan.bing@tum.de</small>
                     </span>
                     
@@ -117,7 +122,7 @@
                     <div class="publication-links">
                          <!-- Arxiv PDF link -->
                       <span class="link-block">
-                        <a href="./static/DAHLIA-v2.pdf" target="_blank"
+                        <a href="./static/IROS2026_DAHLIA_final.pdf" target="_blank"
                         class="external-link button is-normal is-rounded is-dark">
                         <span class="icon">
                           <i class="fas fa-file-pdf"></i>
@@ -166,9 +171,7 @@
   <div class="container is-max-desktop">
     <div class="hero-body">
       <video poster="" id="tree" autoplay controls muted loop height="100%">
-        <!-- Your video here -->
-        <!-- <source src="static/videos/banner_video.mp4" type="video/mp4"> -->
-        <source src="static/videos/DAHLIA-movie.mp4" type="video/mp4">
+        <source src="static/videos/DAHLIA_IROS2026.mp4" type="video/mp4">
       </video>
       <h2 class="subtitle has-text-justified">
         <b>Simulation and real-world demonstrations of DAHLIA framework in solving long-horizon tasks</b>. 
@@ -392,11 +395,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Recent advances in language-conditioned robotic manipulation have leveraged imitation and reinforcement learning to enable robots to execute tasks from human commands. However, these approaches often suffer from limited generalization, adaptability, and the scarcity of large-scale specialized datasets—unlike data-rich fields such as computer vision—leading to challenges in handling complex long-horizon tasks.
-            In this work, We introduce DAHLIA, a data-agnostic framework for language-conditioned long-horizon robotic manipulation that leverages large language models (LLMs) for real-time task planning and execution.
-            Our framework features a dual-tunnel architecture, where a planner LLM decomposes tasks and generates executable plans, while a reporter LLM provides closed-loop feedback, ensuring adaptive re-planning and robust execution.
-            Additionally, we incorporate chain-of-thought (CoT) in model reasoning and temporal abstraction in action execution to enhance efficiency and traceability. 
-            DAHLIA achieves robust generalization across diverse long-horizon tasks, demonstrating state-of-the-art performance in both simulated and real-world scenarios.
+            Long-horizon robotic manipulation requires robots to compose perception, reasoning, and action over extended task sequences, yet existing language-conditioned frameworks often rely on dense step-wise feedback, learned action policies, or unstructured prompting, which limits robustness and generalization. We propose DAHLIA, a data-agnostic code-generation framework that treats long-horizon manipulation as episodic task planning and evaluation. DAHLIA uses progressively organized in-context examples with chain-of-thought reasoning to guide an LLM in synthesizing executable code plans from language instructions. To improve robustness under partial observability, a VLM-based reporter evaluates task outcomes only after each execution episode and provides structured feedback for replanning, avoiding the overhead of per-step inference. Experiments on LoHoRavens, CALVIN, Franka Kitchen, and real-world manipulation tasks show that DAHLIA achieves strong performance on over 30 long-horizon tasks and improves generalization to unseen scenarios, including cluttered scenes and occluded objects.
           </p>
         </div>
       </div>
